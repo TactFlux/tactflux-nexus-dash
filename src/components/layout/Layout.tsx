@@ -10,14 +10,16 @@ interface LayoutProps {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <div className="min-h-screen bg-tactflux-black text-white">
-      <AppSidebar />
-      
-      <main className="ml-64 min-h-screen">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <Header />
-          {children}
-        </div>
-      </main>
+      <div className="flex">
+        <AppSidebar />
+        
+        <main className="flex-1 min-h-screen md:ml-64">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+            <Header />
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
