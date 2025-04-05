@@ -1,62 +1,62 @@
 
 import React from 'react';
 import Layout from '@/components/layout/Layout';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { FileText, Users, Clock, Award } from 'lucide-react';
 
 const mockSimulations = [
   {
     id: '1',
-    name: 'Creative Problem Solving',
-    description: 'Tests creative approaches to solving complex problems',
+    name: 'Kreatives Problemlösen',
+    description: 'Testet kreative Ansätze zur Lösung komplexer Probleme',
     completionRate: 78,
     avgTime: '24m 12s',
-    difficulty: 'Medium',
+    difficulty: 'Mittel',
     candidates: 342
   },
   {
     id: '2',
-    name: 'Logical Reasoning',
-    description: 'Evaluates logical thinking and pattern recognition',
+    name: 'Logisches Denken',
+    description: 'Bewertet logisches Denken und Mustererkennung',
     completionRate: 65,
     avgTime: '18m 45s',
-    difficulty: 'Hard',
+    difficulty: 'Schwer',
     candidates: 278
   },
   {
     id: '3',
     name: 'Design Thinking',
-    description: 'Assesses design methodology and user-centered approach',
+    description: 'Bewertet Design-Methodik und nutzerzentrierten Ansatz',
     completionRate: 82,
     avgTime: '35m 20s',
-    difficulty: 'Medium',
+    difficulty: 'Mittel',
     candidates: 156
   },
   {
     id: '4',
-    name: 'Adaptive Communication',
-    description: 'Measures ability to communicate effectively in changing scenarios',
+    name: 'Adaptive Kommunikation',
+    description: 'Misst die Fähigkeit, in wechselnden Szenarien effektiv zu kommunizieren',
     completionRate: 91,
     avgTime: '15m 08s',
-    difficulty: 'Easy',
+    difficulty: 'Einfach',
     candidates: 412
   },
   {
     id: '5',
-    name: 'Strategic Planning',
-    description: 'Tests ability to develop strategic plans under constraints',
+    name: 'Strategische Planung',
+    description: 'Testet die Fähigkeit, strategische Pläne unter Einschränkungen zu entwickeln',
     completionRate: 62,
     avgTime: '28m 33s',
-    difficulty: 'Hard',
+    difficulty: 'Schwer',
     candidates: 187
   }
 ];
 
 const difficultyColors = {
-  'Easy': 'text-green-400',
-  'Medium': 'text-yellow-400',
-  'Hard': 'text-red-400'
+  'Einfach': 'text-green-400',
+  'Mittel': 'text-yellow-400',
+  'Schwer': 'text-red-400'
 };
 
 const SimulationsPage = () => {
@@ -65,11 +65,11 @@ const SimulationsPage = () => {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold">Simulations & Challenges</h1>
-            <p className="text-gray-400 mt-1">Manage and monitor all simulation modules</p>
+            <h1 className="text-2xl font-bold">Simulationen & Herausforderungen</h1>
+            <p className="text-gray-400 mt-1">Alle Simulationsmodule verwalten und überwachen</p>
           </div>
           <button className="px-4 py-2 bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet rounded-md hover:opacity-90 transition-all">
-            Create New
+            Neu erstellen
           </button>
         </div>
         
@@ -83,7 +83,7 @@ const SimulationsPage = () => {
               <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Completion Rate</span>
+                    <span>Abschlussrate</span>
                     <span>{simulation.completionRate}%</span>
                   </div>
                   <Progress 
@@ -110,7 +110,7 @@ const SimulationsPage = () => {
                   </div>
                   <div className="flex items-center gap-2 col-span-2">
                     <Users className="h-4 w-4 text-tactflux-pink" />
-                    <span className="text-sm">{simulation.candidates} candidates</span>
+                    <span className="text-sm">{simulation.candidates} Kandidaten</span>
                   </div>
                 </div>
               </CardContent>

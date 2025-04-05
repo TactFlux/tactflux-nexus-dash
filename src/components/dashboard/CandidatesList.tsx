@@ -63,10 +63,10 @@ const statusVariants = {
 };
 
 const statusLabels = {
-  'pending': 'Pending',
-  'in-progress': 'In Progress',
-  'completed': 'Completed',
-  'rejected': 'Rejected'
+  'pending': 'Ausstehend',
+  'in-progress': 'In Bearbeitung',
+  'completed': 'Abgeschlossen',
+  'rejected': 'Abgelehnt'
 };
 
 const CandidatesList = () => {
@@ -74,8 +74,8 @@ const CandidatesList = () => {
     <div className="bg-tactflux-gray rounded-xl shadow-card border border-white/5 animate-slide-up">
       <div className="p-6 border-b border-white/5">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Recent Candidates</h3>
-          <button className="text-sm text-tactflux-turquoise hover:underline">View All</button>
+          <h3 className="text-lg font-semibold">Aktuelle Kandidaten</h3>
+          <button className="text-sm text-tactflux-turquoise hover:underline">Alle ansehen</button>
         </div>
       </div>
       
@@ -86,7 +86,7 @@ const CandidatesList = () => {
               <TableHead>Name</TableHead>
               <TableHead>Position</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Score</TableHead>
+              <TableHead className="text-right">Ergebnis</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

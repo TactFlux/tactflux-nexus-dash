@@ -56,8 +56,8 @@ const AppSidebar = () => {
 
   return (
     <aside className="fixed top-0 left-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-10">
-      <div className="p-6 flex justify-center">
-        <div className="relative w-24 h-24">
+      <div className="p-6 flex justify-start">
+        <div className="relative w-36 h-36">
           <img 
             src="/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png" 
             alt="TactFlux Logo" 

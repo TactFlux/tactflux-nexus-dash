@@ -19,7 +19,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="text-xs font-semibold text-gray-400">{label}</p>
         {payload.map((entry: any, index: number) => (
           <p key={`item-${index}`} className="text-sm" style={{ color: entry.stroke }}>
-            {entry.name}: {entry.value}
+            {entry.name === 'candidates' ? 'Kandidaten' : 'Abschlussrate'}: {entry.value}
             {entry.name === 'completionRate' ? '%' : ''}
           </p>
         ))}
@@ -33,8 +33,8 @@ const ProgressChart = () => {
   return (
     <div className="bg-tactflux-gray rounded-xl shadow-card border border-white/5 animate-slide-up">
       <div className="p-6 border-b border-white/5">
-        <h3 className="text-lg font-semibold">Platform Performance</h3>
-        <p className="text-sm text-gray-400">Candidate volume and test completion rates</p>
+        <h3 className="text-lg font-semibold">Plattformleistung</h3>
+        <p className="text-sm text-gray-400">Kandidatenvolumen und Testabschlussraten</p>
       </div>
       
       <div className="p-6 h-80">
@@ -65,7 +65,7 @@ const ProgressChart = () => {
               yAxisId="left"
               type="monotone" 
               dataKey="candidates" 
-              name="Candidates" 
+              name="Kandidaten" 
               stroke="#00FFFF" 
               strokeWidth={2}
               dot={{ fill: '#00FFFF', strokeWidth: 0, r: 4 }} 
@@ -75,7 +75,7 @@ const ProgressChart = () => {
               yAxisId="right"
               type="monotone" 
               dataKey="completionRate" 
-              name="Completion Rate" 
+              name="Abschlussrate" 
               stroke="#FF007F" 
               strokeWidth={2}
               dot={{ fill: '#FF007F', strokeWidth: 0, r: 4 }} 

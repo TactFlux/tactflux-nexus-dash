@@ -56,9 +56,9 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
       <div className="w-full max-w-md animate-fade-in">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center mb-6">
-            <div className="relative w-56 h-56">
+        <div className="text-center mb-8 mt-12">
+          <div className="flex items-center justify-center mb-8">
+            <div className="relative w-64 h-64">
               <img 
                 src="/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png" 
                 alt="TactFlux Logo" 
