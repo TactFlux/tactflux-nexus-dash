@@ -6,15 +6,8 @@ import { ThemeToggle } from '@/components/ui/theme-toggle';
 const Header = () => {
   return (
     <header className="h-16 w-full flex items-center justify-between animate-fade-in">
-      <div className="flex-1 flex items-center">
-        <div className="relative w-10 h-10">
-          <img 
-            src="/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png" 
-            alt="TactFlux Logo" 
-            className="w-full h-full object-contain"
-          />
-        </div>
-        <p className="text-sm text-muted-foreground ml-3">Willkommen zurück bei TactFlux</p>
+      <div className="flex-1">
+        <p className="text-sm text-muted-foreground">Willkommen zurück bei TactFlux</p>
       </div>
 
       <div className="flex items-center gap-4">

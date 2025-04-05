@@ -58,7 +58,7 @@ const Login = () => {
       <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-6">
-            <div className="relative w-28 h-28">
+            <div className="relative w-56 h-56">
               <img 
                 src="/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png" 
                 alt="TactFlux Logo" 

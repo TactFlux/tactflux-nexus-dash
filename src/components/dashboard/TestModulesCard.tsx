@@ -14,35 +14,35 @@ interface TestModule {
 const modules: TestModule[] = [
   {
     id: '1',
-    name: 'Problem Solving Assessment',
+    name: 'Problemlösungs-Assessment',
     completionRate: 78,
     technology: 'Next.js',
     color: 'bg-tactflux-turquoise'
   },
   {
     id: '2',
-    name: 'Creativity & Innovation',
+    name: 'Kreativität & Innovation',
     completionRate: 65,
     technology: 'FastAPI',
     color: 'bg-tactflux-violet'
   },
   {
     id: '3',
-    name: 'Team Collaboration',
+    name: 'Team-Kollaboration',
     completionRate: 92,
     technology: 'Docker',
     color: 'bg-tactflux-pink'
   },
   {
     id: '4',
-    name: 'Technical Knowledge',
+    name: 'Technisches Wissen',
     completionRate: 45,
     technology: 'PostgreSQL',
     color: 'bg-blue-500'
   },
   {
     id: '5',
-    name: 'Communication Skills',
+    name: 'Kommunikationsfähigkeiten',
     completionRate: 83,
     technology: 'Supabase',
     color: 'bg-green-500'

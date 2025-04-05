@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 interface TechnologyCardProps {
@@ -9,29 +10,27 @@ interface TechnologyCardProps {
   color: string;
 }
 
-const TechnologyCard = ({ name, description, icon, color }: TechnologyCardProps) => {
+const TechnologyCard: React.FC<TechnologyCardProps> = ({
+  name,
+  description,
+  icon,
+  color
+}) => {
   return (
-    <div className={cn(
-      "bg-card rounded-xl p-6 border border-border shadow-card",
-      "hover:translate-y-[-2px] transition-all duration-300",
-      "animate-slide-up"
-    )}>
-      <div className={cn(
-        "flex items-center justify-center w-12 h-12 rounded-lg mb-4",
-        color.startsWith('bg-') ? color : `bg-${color}/20`
+    <Card className="border border-white/5 bg-card transition-all duration-300 hover:scale-[1.02]">
+      <CardHeader className={cn(
+        "flex flex-row items-center space-y-0 pb-2",
+        `text-${color}`
       )}>
-        {icon}
-      </div>
-      <h3 className={cn(
-        "text-lg font-semibold mb-2",
-        color.startsWith('text-') ? color : `text-${color}`
-      )}>
-        {name}
-      </h3>
-      <p className="text-sm text-muted-foreground">
-        {description}
-      </p>
-    </div>
+        <div className="flex items-center gap-2">
+          {icon}
+          <h3 className="font-semibold">{name}</h3>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </CardContent>
+    </Card>
   );
 };
 
