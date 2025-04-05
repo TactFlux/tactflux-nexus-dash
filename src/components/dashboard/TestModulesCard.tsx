@@ -54,12 +54,12 @@ const TestModulesCard = () => {
     <div className="bg-tactflux-gray rounded-xl shadow-card border border-white/5 animate-slide-up">
       <div className="p-6 border-b border-white/5">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold">Test Modules</h3>
-          <button className="text-sm text-tactflux-turquoise hover:underline">Manage</button>
+          <h3 className="text-lg font-semibold">Test Module</h3>
+          <button className="text-sm text-tactflux-turquoise hover:underline">Verwalten</button>
         </div>
       </div>
       
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-4">
         {modules.map((module) => (
           <div key={module.id} className="space-y-2">
             <div className="flex justify-between items-center">
@@ -79,7 +79,6 @@ const TestModulesCard = () => {
             <Progress 
               value={module.completionRate} 
               className="h-2 bg-tactflux-black"
-              indicatorClassName={cn(module.color)}
             />
           </div>
         ))}

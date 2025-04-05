@@ -60,7 +60,7 @@ const AppSidebar = () => {
         <div className="flex items-center gap-2">
           <div className="relative w-8 h-8">
             <img 
-              src="/lovable-uploads/e36b46ad-e8ae-4161-978c-451fc62a31fe.png" 
+              src="/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png" 
               alt="TactFlux Logo" 
               className="w-full h-full object-contain"
             />

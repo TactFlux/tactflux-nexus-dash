@@ -20,12 +20,12 @@ const ScoreCard = ({ title, score, maxScore, description, color }: ScoreCardProp
   const percentage = Math.floor((score / maxScore) * 100);
   
   return (
-    <div className="bg-tactflux-gray rounded-xl p-6 shadow-card border border-white/5 h-full animate-fade-in">
+    <div className="bg-tactflux-gray rounded-xl p-6 shadow-card border border-white/5 animate-fade-in">
       <h3 className="text-lg font-semibold">{title}</h3>
       <p className="text-sm text-gray-400 mb-4">{description}</p>
       
-      <div className="flex items-center justify-center my-8">
-        <div className="relative w-40 h-40">
+      <div className="flex items-center justify-center my-6">
+        <div className="relative w-32 h-32">
           <svg className="w-full h-full" viewBox="0 0 100 100">
             <circle 
               cx="50" cy="50" r="45" 
@@ -51,8 +51,8 @@ const ScoreCard = ({ title, score, maxScore, description, color }: ScoreCardProp
             </defs>
           </svg>
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-            <span className="text-3xl font-bold">{score}</span>
-            <span className="text-gray-400 text-sm">/{maxScore}</span>
+            <span className="text-2xl font-bold">{score}</span>
+            <span className="text-gray-400 text-xs">/{maxScore}</span>
           </div>
         </div>
       </div>
@@ -67,7 +67,6 @@ const ScoreCard = ({ title, score, maxScore, description, color }: ScoreCardProp
         <Progress 
           value={percentage} 
           className="h-2 bg-tactflux-black"
-          indicatorClassName={`bg-gradient-to-r ${colorVariants[color]}`}
         />
       </div>
     </div>

@@ -9,7 +9,7 @@ import AccessCodeCard from '@/components/dashboard/AccessCodeCard';
 import FeedbackCard from '@/components/dashboard/FeedbackCard';
 import ProgressChart from '@/components/dashboard/ProgressChart';
 import TechnologyCard from '@/components/dashboard/Technology';
-import { Users, Star, Calendar, Database, FileText } from 'lucide-react';
+import { Users, Star, Calendar, Database } from 'lucide-react';
 
 const Index = () => {
   return (
@@ -48,11 +48,11 @@ const Index = () => {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             <ProgressChart />
+            <CandidatesList />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <AccessCodeCard />
               <FeedbackCard />
             </div>
-            <CandidatesList />
           </div>
           
           {/* Right Column */}
