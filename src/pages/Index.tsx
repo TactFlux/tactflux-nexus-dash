@@ -24,7 +24,7 @@ const Index = () => {
             trend={{ value: 12, isPositive: true }} 
           />
           <StatCard 
-            title="Ø Kreativitätswert" 
+            title="Ø Creative Fit Score" 
             value="78,3" 
             icon={Star} 
             trend={{ value: 5, isPositive: true }}
@@ -58,7 +58,7 @@ const Index = () => {
           {/* Right Column */}
           <div className="space-y-6">
             <ScoreCard 
-              title="Kreativitätswert" 
+              title="Creative Fit Score" 
               score={84} 
               maxScore={100} 
               description="Gesamte kreative Problemlösungsfähigkeit" 
