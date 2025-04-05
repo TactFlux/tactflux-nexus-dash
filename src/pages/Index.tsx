@@ -8,7 +8,6 @@ import ScoreCard from '@/components/dashboard/ScoreCard';
 import AccessCodeCard from '@/components/dashboard/AccessCodeCard';
 import FeedbackCard from '@/components/dashboard/FeedbackCard';
 import ProgressChart from '@/components/dashboard/ProgressChart';
-import CTACard from '@/components/dashboard/CTACard';
 import TechnologyCard from '@/components/dashboard/Technology';
 import { Users, Star, Calendar, Database, FileText } from 'lucide-react';
 
@@ -66,25 +65,16 @@ const Index = () => {
         </section>
         
         {/* Second Row */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-1">
             <AccessCodeCard />
           </div>
           <div className="md:col-span-1">
             <FeedbackCard />
           </div>
-          <div className="md:col-span-1">
-            <CTACard 
-              title="Supercharge Recruiting" 
-              description="Unlock AI-powered insights to find the perfect candidates faster." 
-              buttonText="Upgrade Now" 
-              icon={Star} 
-              gradient="violet-pink"
-            />
-          </div>
         </section>
         
-        {/* Technology Stack Section */}
+        {/* Technology Stack Section - Only showing tech without CTAs */}
         <section className="pt-6">
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Powered By</h2>
