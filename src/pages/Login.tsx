@@ -20,8 +20,8 @@ const Login = () => {
     // Simple validation
     if (!email || !password) {
       toast({
-        title: "Error",
-        description: "Please enter both email and password",
+        title: "Fehler",
+        description: "Bitte gebe E-Mail und Passwort ein",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -35,8 +35,8 @@ const Login = () => {
       
       // Show success message
       toast({
-        title: "Login successful",
-        description: "Welcome to TactFlux Admin Dashboard",
+        title: "Anmeldung erfolgreich",
+        description: "Willkommen im TactFlux Admin-Dashboard",
       });
 
       // Navigate to dashboard
@@ -45,8 +45,8 @@ const Login = () => {
       }, 1000);
     } else {
       toast({
-        title: "Authentication failed",
-        description: "Invalid email or password",
+        title: "Authentifizierung fehlgeschlagen",
+        description: "Ungültige E-Mail oder Passwort",
         variant: "destructive",
       });
       setIsLoading(false);
@@ -54,51 +54,54 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-tactflux-black text-white flex items-center justify-center">
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
       <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet w-10 h-10 rounded-md flex items-center justify-center">
-              <span className="font-bold text-white text-xl">T</span>
+          <div className="flex items-center justify-center mb-6">
+            <div className="relative w-20 h-20">
+              <img 
+                src="/lovable-uploads/e36b46ad-e8ae-4161-978c-451fc62a31fe.png" 
+                alt="TactFlux Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
-            <h1 className="font-bold text-3xl">TactFlux</h1>
           </div>
           <h2 className="text-2xl font-bold mb-2">Admin Login</h2>
-          <p className="text-gray-400">Enter your credentials to access the admin dashboard</p>
+          <p className="text-muted-foreground">Gib deine Anmeldedaten ein, um auf das Admin-Dashboard zuzugreifen</p>
         </div>
         
-        <div className="bg-tactflux-gray p-8 rounded-xl border border-white/5 shadow-card">
+        <div className="bg-card p-8 rounded-xl border border-border shadow-card">
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-gray-300 block">
-                Email
+              <label htmlFor="email" className="text-sm font-medium block">
+                E-Mail
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
                   id="email" 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@tactflux.com"
-                  className="pl-10 bg-tactflux-black border-white/10 focus:border-tactflux-turquoise focus:ring-tactflux-turquoise"
+                  className="pl-10 bg-background border-input focus:border-primary focus:ring-primary"
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-gray-300 block">
-                Password
+              <label htmlFor="password" className="text-sm font-medium block">
+                Passwort
               </label>
               <div className="relative">
-                <LockKeyhole className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <LockKeyhole className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input 
                   id="password" 
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="pl-10 bg-tactflux-black border-white/10 focus:border-tactflux-turquoise focus:ring-tactflux-turquoise"
+                  className="pl-10 bg-background border-input focus:border-primary focus:ring-primary"
                 />
               </div>
             </div>
@@ -108,13 +111,13 @@ const Login = () => {
               className="w-full bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet hover:opacity-90 transition-all"
               disabled={isLoading}
             >
-              {isLoading ? "Authenticating..." : "Log In"}
+              {isLoading ? "Authentifiziere..." : "Anmelden"}
             </Button>
           </form>
         </div>
         
-        <div className="text-center mt-8 text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} TactFlux. All rights reserved.</p>
+        <div className="text-center mt-8 text-sm text-muted-foreground">
+          <p>© {new Date().getFullYear()} TactFlux. Alle Rechte vorbehalten.</p>
         </div>
       </div>
     </div>

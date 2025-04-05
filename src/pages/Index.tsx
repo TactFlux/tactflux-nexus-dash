@@ -18,25 +18,25 @@ const Index = () => {
         {/* Stats Section */}
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
           <StatCard 
-            title="Total Candidates" 
-            value="1,245" 
+            title="Bewerber Gesamt" 
+            value="1.245" 
             icon={Users} 
             trend={{ value: 12, isPositive: true }} 
           />
           <StatCard 
-            title="Avg. Creative Score" 
-            value="78.3" 
+            title="Ø Kreativitätswert" 
+            value="78,3" 
             icon={Star} 
             trend={{ value: 5, isPositive: true }}
           />
           <StatCard 
-            title="Tests This Month" 
+            title="Tests diesen Monat" 
             value="438" 
             icon={Calendar} 
             trend={{ value: 2, isPositive: true }}
           />
           <StatCard 
-            title="Data Points" 
+            title="Datenpunkte" 
             value="156K" 
             icon={Database} 
             trend={{ value: 8, isPositive: true }}
@@ -48,73 +48,66 @@ const Index = () => {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             <ProgressChart />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <AccessCodeCard />
+              <FeedbackCard />
+            </div>
             <CandidatesList />
           </div>
           
           {/* Right Column */}
           <div className="space-y-6">
             <ScoreCard 
-              title="Creative Fit Score" 
+              title="Kreativitätswert" 
               score={84} 
               maxScore={100} 
-              description="Overall creative problem-solving aptitude" 
+              description="Gesamte kreative Problemlösungsfähigkeit" 
               color="turquoise"
             />
             <TestModulesCard />
           </div>
         </section>
         
-        {/* Second Row */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="md:col-span-1">
-            <AccessCodeCard />
-          </div>
-          <div className="md:col-span-1">
-            <FeedbackCard />
-          </div>
-        </section>
-        
-        {/* Technology Stack Section - Only showing tech without CTAs */}
+        {/* Technology Stack Section */}
         <section className="pt-6">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold">Powered By</h2>
-            <p className="text-gray-400">The cutting-edge technology stack behind TactFlux</p>
+            <h2 className="text-2xl font-bold">Technologie-Stack</h2>
+            <p className="text-gray-400">Die moderne Technologie hinter TactFlux</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
             <TechnologyCard 
               name="Next.js" 
-              description="React framework for production-grade frontend" 
+              description="React Framework für das Frontend" 
               icon={<span className="text-2xl">N</span>} 
               color="blue-500"
             />
             <TechnologyCard 
               name="FastAPI" 
-              description="High-performance Python API framework" 
+              description="Hochperformantes Python API-Framework" 
               icon={<span className="text-2xl">⚡</span>} 
               color="tactflux-turquoise"
             />
             <TechnologyCard 
               name="Docker" 
-              description="Containerization for seamless deployment" 
+              description="Containerisierung für einfaches Deployment" 
               icon={<span className="text-2xl">🐳</span>} 
               color="tactflux-violet"
             />
             <TechnologyCard 
               name="PostgreSQL" 
-              description="Advanced open source database" 
+              description="Fortschrittliche Open-Source-Datenbank" 
               icon={<span className="text-2xl">🐘</span>} 
               color="blue-400"
             />
             <TechnologyCard 
               name="Supabase" 
-              description="Open source Firebase alternative" 
+              description="Open-Source Firebase Alternative" 
               icon={<span className="text-2xl">S</span>} 
               color="green-500"
             />
           </div>
         </section>
-        
       </div>
     </Layout>
   );

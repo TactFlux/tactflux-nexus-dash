@@ -15,26 +15,26 @@ const mockFeedback: FeedbackItem[] = [
   {
     id: '1',
     candidate: 'Emma Wilson',
-    module: 'Problem Solving',
+    module: 'Problemlösung',
     date: '2025-04-02',
     rating: 5,
-    comment: 'Excellent approach to the challenging problems. Creative solutions.'
+    comment: 'Exzellenter Ansatz bei schwierigen Problemen. Kreative Lösungen.'
   },
   {
     id: '2',
     candidate: 'Michael Chen',
-    module: 'Team Collaboration',
+    module: 'Teamzusammenarbeit',
     date: '2025-04-01',
     rating: 3,
-    comment: 'Good communication but could improve on delegation strategies.'
+    comment: 'Gute Kommunikation, könnte aber Delegationsstrategien verbessern.'
   }
 ];
 
 const FeedbackCard = () => {
   return (
-    <div className="bg-tactflux-gray rounded-xl shadow-card border border-white/5 animate-fade-in">
-      <div className="p-6 border-b border-white/5">
-        <h3 className="text-lg font-semibold">Recent Feedback</h3>
+    <div className="bg-card rounded-xl shadow-card border border-border h-full animate-fade-in">
+      <div className="p-6 border-b border-border">
+        <h3 className="text-lg font-semibold">Aktuelles Feedback</h3>
       </div>
       
       <div className="p-4">
@@ -42,7 +42,7 @@ const FeedbackCard = () => {
           {mockFeedback.map((feedback) => (
             <div
               key={feedback.id}
-              className="p-4 border border-white/5 rounded-lg hover:bg-white/5 transition-colors"
+              className="p-4 border border-border rounded-lg hover:bg-muted/20 transition-colors"
             >
               <div className="flex justify-between items-start">
                 <div>
@@ -51,7 +51,7 @@ const FeedbackCard = () => {
                     <span className="text-xs px-2 py-1 bg-tactflux-violet/20 text-tactflux-violet rounded-full">
                       {feedback.module}
                     </span>
-                    <span className="text-xs text-gray-400">{feedback.date}</span>
+                    <span className="text-xs text-muted-foreground">{feedback.date}</span>
                   </div>
                 </div>
                 
@@ -70,7 +70,7 @@ const FeedbackCard = () => {
                 </div>
               </div>
               
-              <p className="text-sm text-gray-300 mt-3">
+              <p className="text-sm text-muted-foreground mt-3">
                 {feedback.comment}
               </p>
             </div>
@@ -78,9 +78,9 @@ const FeedbackCard = () => {
         </div>
       </div>
       
-      <div className="p-4 text-center border-t border-white/5">
+      <div className="p-4 text-center border-t border-border">
         <button className="text-sm text-tactflux-turquoise hover:underline">
-          View All Feedback
+          Alle Feedbacks anzeigen
         </button>
       </div>
     </div>

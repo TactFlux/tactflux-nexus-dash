@@ -9,7 +9,7 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   return (
-    <div className="min-h-screen bg-tactflux-black text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="flex">
         <AppSidebar />
         

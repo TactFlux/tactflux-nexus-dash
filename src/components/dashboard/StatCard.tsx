@@ -16,12 +16,12 @@ interface StatCardProps {
 const StatCard = ({ title, value, icon: Icon, trend, className }: StatCardProps) => {
   return (
     <div className={cn(
-      "bg-tactflux-gray rounded-xl p-6 shadow-card border border-white/5 transition-all hover:translate-y-[-2px] hover:shadow-glow animate-slide-up",
+      "bg-card rounded-xl p-6 shadow-card border border-border transition-all hover:translate-y-[-2px] hover:shadow-glow animate-slide-up",
       className
     )}>
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-gray-400">{title}</p>
+          <p className="text-sm text-muted-foreground">{title}</p>
           <h3 className="text-3xl font-bold mt-1">{value}</h3>
           
           {trend && (
@@ -30,7 +30,7 @@ const StatCard = ({ title, value, icon: Icon, trend, className }: StatCardProps)
               trend.isPositive ? "text-green-500" : "text-tactflux-pink"
             )}>
               {trend.isPositive ? '↑' : '↓'} {trend.value}% 
-              <span className="text-gray-400 ml-1">vs. previous period</span>
+              <span className="text-muted-foreground ml-1">vs. Vorperiode</span>
             </p>
           )}
         </div>

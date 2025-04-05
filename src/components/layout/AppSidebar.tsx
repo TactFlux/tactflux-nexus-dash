@@ -1,12 +1,11 @@
 
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
   FileText,
   Settings,
-  Database,
   LogOut,
   PieChart
 } from 'lucide-react';
@@ -28,12 +27,12 @@ const NavItem = ({ href, icon: Icon, label, isActive = false }: NavItemProps) =>
         "flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 group",
         isActive 
           ? "bg-gradient-to-r from-tactflux-turquoise/20 to-tactflux-violet/20 text-white" 
-          : "text-gray-400 hover:text-white hover:bg-white/5"
+          : "text-muted-foreground hover:text-foreground hover:bg-muted/20"
       )}
     >
       <Icon className={cn(
         "h-5 w-5 transition-all",
-        isActive ? "text-tactflux-turquoise" : "text-gray-400 group-hover:text-tactflux-turquoise"
+        isActive ? "text-tactflux-turquoise" : "text-muted-foreground group-hover:text-tactflux-turquoise"
       )} />
       <span>{label}</span>
     </Link>
@@ -42,47 +41,52 @@ const NavItem = ({ href, icon: Icon, label, isActive = false }: NavItemProps) =>
 
 const AppSidebar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
-  const pathname = window.location.pathname;
+  const pathname = location.pathname;
 
   const handleLogout = () => {
     localStorage.removeItem('tactflux-admin');
     toast({
-      title: "Logged out successfully",
-      description: "You have been logged out of the admin dashboard",
+      title: "Erfolgreich abgemeldet",
+      description: "Du wurdest vom Admin-Dashboard abgemeldet",
     });
     navigate('/login');
   };
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-64 bg-tactflux-black border-r border-white/5 flex flex-col z-10">
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-10">
       <div className="p-6">
         <div className="flex items-center gap-2">
-          <div className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet w-8 h-8 rounded-md flex items-center justify-center">
-            <span className="font-bold text-white text-lg">T</span>
+          <div className="relative w-8 h-8">
+            <img 
+              src="/lovable-uploads/e36b46ad-e8ae-4161-978c-451fc62a31fe.png" 
+              alt="TactFlux Logo" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <h1 className="font-bold text-xl text-white">TactFlux Admin</h1>
         </div>
       </div>
 
       <div className="px-3 py-2">
-        <p className="text-xs font-medium text-gray-500 uppercase px-3 py-2">Admin Menu</p>
+        <p className="text-xs font-medium text-muted-foreground uppercase px-3 py-2">Admin Menü</p>
         <nav className="flex flex-col gap-1">
           <NavItem href="/" icon={LayoutDashboard} label="Dashboard" isActive={pathname === '/'} />
-          <NavItem href="/candidates" icon={Users} label="Candidates" isActive={pathname === '/candidates'} />
-          <NavItem href="/simulations" icon={FileText} label="Simulations" isActive={pathname === '/simulations'} />
-          <NavItem href="/statistics" icon={PieChart} label="Statistics" isActive={pathname === '/statistics'} />
-          <NavItem href="/settings" icon={Settings} label="Settings" isActive={pathname === '/settings'} />
+          <NavItem href="/candidates" icon={Users} label="Bewerber" isActive={pathname === '/candidates'} />
+          <NavItem href="/simulations" icon={FileText} label="Simulationen" isActive={pathname === '/simulations'} />
+          <NavItem href="/statistics" icon={PieChart} label="Statistiken" isActive={pathname === '/statistics'} />
+          <NavItem href="/settings" icon={Settings} label="Einstellungen" isActive={pathname === '/settings'} />
         </nav>
       </div>
 
-      <div className="mt-auto px-3 py-4 border-t border-white/5">
+      <div className="mt-auto px-3 py-4 border-t border-sidebar-border">
         <div 
-          className="flex items-center gap-3 px-3 py-2 rounded-md text-gray-400 cursor-pointer hover:bg-white/5 hover:text-white transition-all duration-200"
+          className="flex items-center gap-3 px-3 py-2 rounded-md text-muted-foreground cursor-pointer hover:bg-muted/20 hover:text-foreground transition-all duration-200"
           onClick={handleLogout}
         >
           <LogOut className="h-5 w-5" />
-          <span>Log Out</span>
+          <span>Abmelden</span>
         </div>
       </div>
     </aside>

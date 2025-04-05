@@ -12,7 +12,7 @@ interface TechnologyCardProps {
 const TechnologyCard = ({ name, description, icon, color }: TechnologyCardProps) => {
   return (
     <div className={cn(
-      "bg-tactflux-gray rounded-xl p-6 border border-white/5 shadow-card",
+      "bg-card rounded-xl p-6 border border-border shadow-card",
       "hover:translate-y-[-2px] transition-all duration-300",
       "animate-slide-up"
     )}>
@@ -28,7 +28,7 @@ const TechnologyCard = ({ name, description, icon, color }: TechnologyCardProps)
       )}>
         {name}
       </h3>
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-muted-foreground">
         {description}
       </p>
     </div>
