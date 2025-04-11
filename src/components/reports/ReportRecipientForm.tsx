@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 const formSchema = z.object({
   email: z.string().email('Gültige E-Mail-Adresse erforderlich'),
@@ -25,6 +26,8 @@ type ReportRecipientFormValues = z.infer<typeof formSchema>;
 
 const ReportRecipientForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const { toast } = useToast();
+  const { user } = useAuth();
+  
   const form = useForm<ReportRecipientFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,11 +37,21 @@ const ReportRecipientForm = ({ onSuccess }: { onSuccess: () => void }) => {
   });
 
   const onSubmit = async (data: ReportRecipientFormValues) => {
+    if (!user) {
+      toast({
+        variant: "destructive",
+        title: "Fehler",
+        description: "Sie müssen angemeldet sein, um Empfänger hinzuzufügen.",
+      });
+      return;
+    }
+    
     try {
       const { error } = await supabase.from('report_recipients').insert({
         email: data.email,
         company_name: data.company_name || null,
         active: true,
+        user_id: user.id,
       });
 
       if (error) throw error;
