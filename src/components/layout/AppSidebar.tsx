@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -40,23 +39,19 @@ const NavItem = ({
   const { isEnterprise } = useUserTier();
   const { user } = useAuth();
   
-  // Determine if the user has access based on their plan
   const userPlan = user?.company?.plan || 'free';
   const hasProAccess = userPlan === 'pro' || userPlan === 'enterprise';
   const hasEnterpriseAccess = userPlan === 'enterprise';
   const isAdmin = user?.role === 'admin';
   
-  // Hide enterprise-only items if user is not an enterprise user
   if (isEnterpriseOnly && !hasEnterpriseAccess) {
     return null;
   }
   
-  // Hide pro-only items if user doesn't have pro access
   if (isProOnly && !hasProAccess) {
     return null;
   }
   
-  // Hide admin-only items if user is not an admin
   if (isAdminOnly && !isAdmin) {
     return null;
   }
@@ -98,30 +93,20 @@ const AppSidebar = () => {
   };
 
   const companyLogo = user?.company?.logoUrl || "/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png";
-  const companyName = user?.company?.name || "TactFlux";
-  const companyPlan = user?.company?.plan || "free";
-  const isAdmin = user?.role === 'admin';
 
   return (
     <aside className="h-full w-full bg-sidebar border-r border-sidebar-border flex flex-col">
-      <div className="p-6 flex flex-col items-center justify-start">
-        <div className="relative w-24 h-24 mb-2">
+      <div className="p-4 flex flex-col items-start justify-start">
+        <div className="relative w-40 h-16 mb-4">
           <img 
             src={companyLogo} 
-            alt={`${companyName} Logo`} 
-            className="w-full h-full object-contain"
+            alt="Company Logo" 
+            className="w-full h-full object-contain object-left"
           />
-        </div>
-        <div className="text-center">
-          <h2 className="text-lg font-semibold">{companyName}</h2>
-          <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
-            {companyPlan === 'free' ? 'Free Plan' : companyPlan === 'pro' ? 'Pro Plan' : 'Enterprise Plan'}
-          </span>
         </div>
       </div>
 
       <div className="px-3 py-2 overflow-y-auto flex-1">
-        <p className="text-xs font-medium text-muted-foreground uppercase px-3 py-2">Admin Menü</p>
         <nav className="flex flex-col gap-1">
           <NavItem href="/" icon={LayoutDashboard} label="Dashboard" isActive={pathname === '/'} />
           <NavItem href="/candidates" icon={Users} label="Bewerber" isActive={pathname === '/candidates'} />
