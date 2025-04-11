@@ -15,3 +15,19 @@ export interface SimulationData {
   candidates?: number | string;
   [key: string]: any; // Für zusätzliche Flexibilität
 }
+
+export interface CandidateData {
+  id: string;
+  name: string;
+  email: string;
+  position: string;
+  status: 'pending' | 'in-progress' | 'completed' | 'rejected';
+  score: number;
+  date?: string;
+  moduleScores?: {
+    name: string;
+    score: number;
+  }[];
+  gptDetectionScore?: number;
+  feedback?: string;
+}

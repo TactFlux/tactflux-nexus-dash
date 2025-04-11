@@ -2,6 +2,10 @@
 import React from 'react';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { FileText } from 'lucide-react';
+import { useUserTier } from '@/contexts/UserTierContext';
 
 interface Candidate {
   id: string;
@@ -70,12 +74,16 @@ const statusLabels = {
 };
 
 const CandidatesList = () => {
+  const { isProOrHigher } = useUserTier();
+
   return (
     <div className="bg-tactflux-gray rounded-xl shadow-card border border-white/5 animate-slide-up">
       <div className="p-6 border-b border-white/5">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-semibold">Aktuelle Kandidaten</h3>
-          <button className="text-sm text-tactflux-turquoise hover:underline">Alle ansehen</button>
+          <Link to="/candidates" className="text-sm text-tactflux-turquoise hover:underline">
+            Alle ansehen
+          </Link>
         </div>
       </div>
       
@@ -87,6 +95,7 @@ const CandidatesList = () => {
               <TableHead>Position</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Ergebnis</TableHead>
+              {isProOrHigher && <TableHead></TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -113,6 +122,22 @@ const CandidatesList = () => {
                     {candidate.score > 0 ? candidate.score : '-'}
                   </span>
                 </TableCell>
+                {isProOrHigher && (
+                  <TableCell className="text-right">
+                    {candidate.status !== 'pending' && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        asChild
+                      >
+                        <Link to={`/candidates/${candidate.id}/report`}>
+                          <FileText className="h-4 w-4" />
+                          <span className="sr-only">Report</span>
+                        </Link>
+                      </Button>
+                    )}
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

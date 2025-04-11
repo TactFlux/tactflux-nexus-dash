@@ -14,6 +14,7 @@ import CandidatesPage from "./pages/candidates";
 import SimulationsPage from "./pages/simulations";
 import SimulationDetailPage from "./pages/simulations/[id]";
 import StatisticsPage from "./pages/statistics";
+import CandidateReportPage from "./pages/candidates/[id]/report";
 import { UserTierProvider } from "./contexts/UserTierContext";
 
 const queryClient = new QueryClient();
@@ -37,6 +38,11 @@ const App = () => (
               <Route path="/candidates" element={
                 <ProtectedRoute>
                   <CandidatesPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/candidates/:id/report" element={
+                <ProtectedRoute>
+                  <CandidateReportPage />
                 </ProtectedRoute>
               } />
               <Route path="/simulations" element={
