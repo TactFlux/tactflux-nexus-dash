@@ -5,7 +5,6 @@ import {
   LayoutDashboard,
   Users,
   FileText,
-  Settings,
   LogOut,
   PieChart,
   BarChart,
@@ -68,8 +67,8 @@ const NavItem = ({
       className={cn(
         "flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-200 group min-h-[44px]",
         isActive 
-          ? "bg-gradient-to-r from-[var(--company-primary)]/20 to-[var(--company-accent)]/20 text-white" 
-          : "text-muted-foreground hover:text-foreground hover:bg-muted/20"
+          ? "bg-gradient-to-r from-[var(--company-primary)]/20 to-[var(--company-accent)]/20 text-white border-l-4 border-[var(--company-primary)]" 
+          : "text-muted-foreground hover:text-foreground hover:bg-[var(--company-accent)]/10"
       )}
     >
       <Icon className={cn(
@@ -127,7 +126,7 @@ const AppSidebar = () => {
           <NavItem href="/" icon={LayoutDashboard} label="Dashboard" isActive={pathname === '/'} />
           <NavItem href="/candidates" icon={Users} label="Bewerber" isActive={pathname === '/candidates'} />
           <NavItem href="/simulations" icon={FileText} label="Simulationen" isActive={pathname === '/simulations'} />
-          <NavItem href="/statistics" icon={PieChart} label="Statistiken" isActive={pathname === '/statistics'} />
+          <NavItem href="/statistics" icon={PieChart} label="Statistiken" isActive={pathname.startsWith('/statistics')} />
           
           <p className="text-xs font-medium text-muted-foreground uppercase px-3 py-2 mt-4">Administration</p>
           <NavItem 
@@ -158,8 +157,6 @@ const AppSidebar = () => {
             isActive={pathname === '/admin/company-settings'} 
             isAdminOnly
           />
-          
-          <NavItem href="/settings" icon={Settings} label="Einstellungen" isActive={pathname === '/settings'} />
         </nav>
       </div>
 

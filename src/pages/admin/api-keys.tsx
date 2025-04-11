@@ -8,11 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Copy, Plus, Trash2, Key } from 'lucide-react';
+import { Copy, Plus, Trash2, Key, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { de } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import EnterpriseFeature from '@/components/tier/EnterpriseFeature';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ApiKey {
   id: string;
@@ -30,6 +31,7 @@ const ApiKeysPage = () => {
   const [isLoading1, setIsLoading1] = useState(true);
   const [description, setDescription] = useState('');
   const [newKey, setNewKey] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isEnterprise) {
@@ -50,7 +52,7 @@ const ApiKeysPage = () => {
       
       if (error) throw error;
       setApiKeys(data || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Fehler beim Laden der API-Keys:', error);
       toast({
         title: 'Fehler',
@@ -64,17 +66,31 @@ const ApiKeysPage = () => {
 
   const createApiKey = async () => {
     try {
-      const user = await supabase.auth.getUser();
-      if (!user.data.user) throw new Error('Nicht angemeldet');
+      setIsGenerating(true);
       
-      const { data, error } = await supabase.rpc('create_api_key', {
-        user_uuid: user.data.user.id,
-        key_description: description || null
-      });
+      // Generate a random API key (this is just for demo purposes)
+      // In a real application, this would be done server-side
+      const randomKey = Array(32)
+        .fill(0)
+        .map(() => Math.random().toString(36).charAt(2))
+        .join('');
+      
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData?.user) throw new Error('Nicht angemeldet');
+      
+      // Insert the new API key into the database
+      const { data, error } = await supabase
+        .from('api_keys')
+        .insert({
+          api_key: randomKey,
+          description: description || null,
+          user_id: userData.user.id
+        })
+        .select();
       
       if (error) throw error;
       
-      setNewKey(data);
+      setNewKey(randomKey);
       setDescription('');
       fetchApiKeys();
       
@@ -89,6 +105,8 @@ const ApiKeysPage = () => {
         description: error.message || 'API-Key konnte nicht erstellt werden.',
         variant: 'destructive',
       });
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -156,19 +174,32 @@ const ApiKeysPage = () => {
                     />
                   </div>
                   <div className="flex items-end">
-                    <Button onClick={createApiKey} className="w-full">
-                      <Plus className="mr-2 h-4 w-4" />
-                      API-Key erstellen
+                    <Button 
+                      onClick={createApiKey} 
+                      className="w-full" 
+                      disabled={isGenerating}
+                    >
+                      {isGenerating ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generiere...
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="mr-2 h-4 w-4" />
+                          API-Key erstellen
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>
 
                 {newKey && (
-                  <div className="mt-4 p-4 bg-muted rounded-md border border-border">
+                  <div className="mt-4 p-4 bg-muted rounded-md border border-border animate-fade-in">
                     <div className="flex justify-between items-center">
-                      <div>
+                      <div className="max-w-[80%]">
                         <p className="text-sm font-medium mb-1">Dein neuer API-Key (nur einmal sichtbar):</p>
-                        <p className="font-mono text-xs bg-background p-2 rounded">{newKey}</p>
+                        <p className="font-mono text-xs bg-background p-2 rounded break-all">{newKey}</p>
                       </div>
                       <Button variant="outline" size="sm" onClick={() => copyToClipboard(newKey)}>
                         <Copy className="h-4 w-4" />
@@ -232,6 +263,17 @@ const ApiKeysPage = () => {
               )}
             </CardContent>
           </Card>
+          
+          <Alert className="bg-muted border border-border">
+            <AlertDescription>
+              <div className="flex items-center gap-2">
+                <Key className="h-4 w-4 text-tactflux-turquoise" />
+                <span className="text-sm">
+                  API-Keys sind nur für Enterprise-Kunden verfügbar und ermöglichen automatisierte Integrationen mit deinen bestehenden Systemen.
+                </span>
+              </div>
+            </AlertDescription>
+          </Alert>
         </div>
       </EnterpriseFeature>
     </Layout>

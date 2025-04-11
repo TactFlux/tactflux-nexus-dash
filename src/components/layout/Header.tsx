@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Search, Menu } from 'lucide-react';
+import { Bell, Search } from 'lucide-react';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -11,31 +11,85 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/hooks/useAuth';
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuList, NavigationMenuTrigger } from '@/components/ui/navigation-menu';
 
 const Header = () => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
   
-  const companyName = user?.company?.name || 'TactFlux';
+  const companyLogo = user?.company?.logoUrl || "/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png";
   const userEmail = user?.email || 'admin@tactflux.com';
   const userRole = user?.role || 'admin';
   
+  // Search functionality
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [searchResults, setSearchResults] = React.useState<any[]>([]);
+  const [showResults, setShowResults] = React.useState(false);
+  
+  // Mock search results - in a real app, this would call an API
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    
+    if (query.length > 1) {
+      // Simulate search results
+      const mockResults = [
+        { id: 1, name: 'Sarah Johnson', type: 'Kandidat', path: '/candidates/1' },
+        { id: 2, name: 'Michael Chen', type: 'Kandidat', path: '/candidates/2' },
+        { id: 3, name: 'API Schlüssel', type: 'Seite', path: '/admin/api-keys' },
+        { id: 4, name: 'Reporting', type: 'Seite', path: '/admin/report-settings' },
+      ].filter(item => 
+        item.name.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      setSearchResults(mockResults);
+      setShowResults(true);
+    } else {
+      setSearchResults([]);
+      setShowResults(false);
+    }
+  };
+
   return (
     <header className="h-16 w-full flex items-center justify-between animate-fade-in">
-      <div className="flex-1">
-        <p className="text-sm text-muted-foreground hidden md:block">
-          Willkommen zurück bei {companyName}
-        </p>
+      <div className="flex-1 flex items-center">
+        <img 
+          src={companyLogo} 
+          alt="Company Logo" 
+          className="h-9 object-contain"
+        />
       </div>
 
       <div className="flex items-center gap-2 sm:gap-4">
-        <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input 
-            type="text" 
-            placeholder="Suchen..." 
-            className="bg-muted/50 border border-input rounded-full py-2 px-10 w-64 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
-          />
+        <div className="relative">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <input 
+              type="text" 
+              placeholder="Suchen..." 
+              className="bg-muted/50 border border-input rounded-full py-2 px-10 w-64 text-sm focus:outline-none focus:ring-1 focus:ring-primary/50"
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              onFocus={() => searchQuery.length > 1 && setShowResults(true)}
+              onBlur={() => setTimeout(() => setShowResults(false), 200)}
+            />
+          </div>
+          
+          {showResults && searchResults.length > 0 && (
+            <div className="absolute top-full mt-1 w-full z-50 bg-card rounded-md border border-border shadow-lg py-2">
+              {searchResults.map((result) => (
+                <a 
+                  key={result.id}
+                  href={result.path}
+                  className="flex items-center px-4 py-2 hover:bg-muted text-sm"
+                >
+                  <div>
+                    <p className="font-medium">{result.name}</p>
+                    <p className="text-xs text-muted-foreground">{result.type}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
 
         {isMobile && (

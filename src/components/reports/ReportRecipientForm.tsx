@@ -28,6 +28,7 @@ type ReportRecipientFormValues = z.infer<typeof formSchema>;
 const ReportRecipientForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   
   const form = useForm<ReportRecipientFormValues>({
     resolver: zodResolver(formSchema),
@@ -48,6 +49,8 @@ const ReportRecipientForm = ({ onSuccess }: { onSuccess: () => void }) => {
     }
     
     try {
+      setIsSubmitting(true);
+      
       const { error } = await supabase.from('report_recipients').insert({
         email: data.email,
         company_name: data.company_name || null,
@@ -65,54 +68,55 @@ const ReportRecipientForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
       form.reset();
       onSuccess();
-    } catch (error) {
+      
+    } catch (error: any) {
       console.error('Error adding recipient:', error);
       toast({
         variant: "destructive",
         title: "Fehler",
-        description: "Der Empfänger konnte nicht hinzugefügt werden.",
+        description: error.message || "Der Empfänger konnte nicht hinzugefügt werden.",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <PlanFeature requiredPlan="enterprise">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>E-Mail</FormLabel>
-                <FormControl>
-                  <Input placeholder="beispiel@firma.de" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>E-Mail</FormLabel>
+              <FormControl>
+                <Input placeholder="beispiel@firma.de" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          <FormField
-            control={form.control}
-            name="company_name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Firmenname (optional)</FormLabel>
-                <FormControl>
-                  <Input placeholder="Firma GmbH" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <FormField
+          control={form.control}
+          name="company_name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Firmenname (optional)</FormLabel>
+              <FormControl>
+                <Input placeholder="Firma GmbH" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-          <Button type="submit" className="mt-4">
-            Hinzufügen
-          </Button>
-        </form>
-      </Form>
-    </PlanFeature>
+        <Button type="submit" className="mt-4" disabled={isSubmitting}>
+          {isSubmitting ? 'Wird hinzugefügt...' : 'Hinzufügen'}
+        </Button>
+      </form>
+    </Form>
   );
 };
 

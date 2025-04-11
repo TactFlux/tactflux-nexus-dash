@@ -8,7 +8,6 @@ import ScoreCard from '@/components/dashboard/ScoreCard';
 import AccessCodeCard from '@/components/dashboard/AccessCodeCard';
 import FeedbackCard from '@/components/dashboard/FeedbackCard';
 import ProgressChart from '@/components/dashboard/ProgressChart';
-import TechnologyCard from '@/components/dashboard/Technology';
 import { Users, Star, Calendar, Database } from 'lucide-react';
 
 const Index = () => {
@@ -65,47 +64,6 @@ const Index = () => {
               color="turquoise"
             />
             <TestModulesCard />
-          </div>
-        </section>
-        
-        {/* Technology Stack Section */}
-        <section className="pt-6">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold">Technologie-Stack</h2>
-            <p className="text-gray-400">Die moderne Technologie hinter TactFlux</p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
-            <TechnologyCard 
-              name="Next.js" 
-              description="React Framework für das Frontend" 
-              icon={<span className="text-2xl">N</span>} 
-              color="blue-500"
-            />
-            <TechnologyCard 
-              name="FastAPI" 
-              description="Hochperformantes Python API-Framework" 
-              icon={<span className="text-2xl">⚡</span>} 
-              color="tactflux-turquoise"
-            />
-            <TechnologyCard 
-              name="Docker" 
-              description="Containerisierung für einfaches Deployment" 
-              icon={<span className="text-2xl">🐳</span>} 
-              color="tactflux-violet"
-            />
-            <TechnologyCard 
-              name="PostgreSQL" 
-              description="Fortschrittliche Open-Source-Datenbank" 
-              icon={<span className="text-2xl">🐘</span>} 
-              color="blue-400"
-            />
-            <TechnologyCard 
-              name="Supabase" 
-              description="Open-Source Firebase Alternative" 
-              icon={<span className="text-2xl">S</span>} 
-              color="green-500"
-            />
           </div>
         </section>
       </div>
