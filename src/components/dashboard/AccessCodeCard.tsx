@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Copy, Trash2, Plus } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { cn } from '@/lib/utils';
 
 interface AccessCode {
   id: string;

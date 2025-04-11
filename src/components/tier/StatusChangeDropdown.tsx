@@ -51,7 +51,6 @@ const StatusChangeDropdown = ({ currentStatus, candidateId, onStatusChange }: St
       toast({
         title: "Status aktualisiert",
         description: `Der Status wurde erfolgreich auf "${statusOptions.find(opt => opt.value === status)?.label}" geändert.`,
-        icon: <Check className="h-4 w-4 text-green-500" />
       });
     }, 600);
   };

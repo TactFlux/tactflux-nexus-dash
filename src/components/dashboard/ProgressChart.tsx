@@ -73,12 +73,12 @@ const ProgressChart = () => {
             />
             <Tooltip content={<CustomTooltip />} />
             <Legend 
-              formatter={(value) => (
+              formatter={(value: string) => (
                 <span className="text-sm transition-all duration-300 cursor-pointer hover:text-white">
                   {value === 'candidates' ? 'Kandidaten' : 'Abschlussrate'}
                 </span>
               )}
-              onMouseEnter={(e) => handleMouseEnter(e.dataKey)}
+              onMouseEnter={(e) => handleMouseEnter(e.dataKey as string)}
               onMouseLeave={handleMouseLeave}
             />
             <Line 
