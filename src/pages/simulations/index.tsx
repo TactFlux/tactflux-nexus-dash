@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -178,7 +177,6 @@ const SimulationsPage = () => {
   };
 
   const totalCandidates = simulationsData.reduce((sum, sim) => {
-    // Ensure type safety by converting candidates to a number
     const candidates = sim.candidates ?? 0;
     return sum + (typeof candidates === 'number' 
       ? candidates 
