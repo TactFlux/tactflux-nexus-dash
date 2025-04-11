@@ -1,12 +1,16 @@
 
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Code, Copy } from 'lucide-react';
+import { Code, Copy, Key } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
+import { useUserTier } from '@/contexts/UserTierContext';
 
 const APIEndpoints: React.FC = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const { isEnterprise } = useUserTier();
 
   const apiEndpoints = [
     {
@@ -64,6 +68,29 @@ const APIEndpoints: React.FC = () => {
             </Button>
           </div>
         ))}
+        
+        {isEnterprise && (
+          <div className="mt-6 p-4 border border-tactflux-turquoise/30 bg-tactflux-turquoise/5 rounded-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-medium flex items-center">
+                  <Key className="h-4 w-4 mr-2 text-tactflux-turquoise" />
+                  Enterprise API-Zugang
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Als Enterprise-Nutzer hast du Zugriff auf unsere erweiterte REST API
+                </p>
+              </div>
+              <Button 
+                size="sm"
+                className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet"
+                onClick={() => navigate('/admin/api-keys')}
+              >
+                API-Keys verwalten
+              </Button>
+            </div>
+          </div>
+        )}
         
         <div className="mt-4">
           <p className="text-sm text-muted-foreground">

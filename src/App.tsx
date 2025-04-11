@@ -18,6 +18,8 @@ import SimulationDetailPage from "./pages/simulations/[id]";
 import StatisticsPage from "./pages/statistics";
 import CandidateReportPage from "./pages/candidates/[id]/report";
 import { UserTierProvider } from "./contexts/UserTierContext";
+import ApiKeysPage from "./pages/admin/api-keys";
+import ApiDocsPage from "./pages/admin/api-docs";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +72,16 @@ const App = () => (
               <Route path="/statistics" element={
                 <ProtectedRoute>
                   <StatisticsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/api-keys" element={
+                <ProtectedRoute>
+                  <ApiKeysPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/api-docs" element={
+                <ProtectedRoute>
+                  <ApiDocsPage />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
