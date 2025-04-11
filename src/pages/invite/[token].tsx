@@ -18,6 +18,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { generateRandomId } from '@/utils/idGenerator';
+import { UserRole } from '@/types/team';
 
 // Define form schema
 const formSchema = z.object({
@@ -37,7 +38,7 @@ type FormValues = z.infer<typeof formSchema>;
 const mockInvitationData = {
   companyName: "Beispiel GmbH",
   email: "einladung@beispiel.de",
-  role: "hr" as const,
+  role: "hr" as UserRole,
   valid: true,
 };
 
