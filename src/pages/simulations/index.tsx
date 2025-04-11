@@ -38,6 +38,13 @@ interface Simulation {
   role?: string;
 }
 
+interface ChartData {
+  name: string;
+  avgScore: number;
+  completionRate: number;
+  candidates: number;
+}
+
 const difficultyColors = {
   'Einfach': 'text-green-400',
   'Mittel': 'text-yellow-400',
