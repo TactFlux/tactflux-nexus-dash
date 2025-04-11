@@ -100,6 +100,29 @@
   html {
     @apply scroll-smooth;
   }
+  
+  /* Add smooth scrolling to main content areas */
+  main, section, .main-content {
+    @apply scroll-smooth;
+  }
+  
+  /* Improve button interactions */
+  button, a, [role="button"] {
+    @apply cursor-pointer transition-all duration-300 outline-none;
+  }
+  
+  /* Improve scrollbars */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted/50 hover:bg-muted rounded-full;
+  }
 }
 
 @layer utilities {
@@ -147,9 +170,95 @@
     animation: shine 3s infinite;
   }
   
+  /* Better glow effect */
+  .hover-glow {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-glow:hover {
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);
+  }
+  
+  /* For animated border effect */
+  .animated-border {
+    @apply relative overflow-hidden;
+  }
+  
+  .animated-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    animation: animate-border 2s linear infinite;
+  }
+  
+  @keyframes animate-border {
+    0% {
+      left: -100%;
+    }
+    50% {
+      left: 100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+  
+  /* Flicker text for important elements */
+  .flicker-text {
+    animation: flicker 5s linear infinite;
+  }
+  
+  @keyframes flicker {
+    0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+      opacity: 1;
+    }
+    20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+      opacity: 0.5;
+    }
+  }
+  
   @keyframes shine {
     100% {
       left: 125%;
     }
+  }
+  
+  /* Smooth fade in for elements */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0;
+  }
+  
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Hover scale effect */
+  .hover-scale {
+    transition: transform 0.3s ease;
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Active press effect */
+  .active-press {
+    transition: transform 0.2s ease;
+  }
+  
+  .active-press:active {
+    transform: scale(0.98);
   }
 }

@@ -1,6 +1,7 @@
 
-import React from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useState } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { cn } from '@/lib/utils';
 
 const data = [
   { name: 'Jan', candidates: 25, completionRate: 62 },
@@ -15,7 +16,7 @@ const data = [
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-tactflux-black p-3 rounded-lg border border-white/10 shadow-lg">
+      <div className="bg-tactflux-black p-3 rounded-lg border border-white/10 shadow-lg animate-fade-in">
         <p className="text-xs font-semibold text-gray-400">{label}</p>
         {payload.map((entry: any, index: number) => (
           <p key={`item-${index}`} className="text-sm" style={{ color: entry.stroke }}>
@@ -30,8 +31,18 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 const ProgressChart = () => {
+  const [activeDataKey, setActiveDataKey] = useState<string | null>(null);
+
+  const handleMouseEnter = (dataKey: string) => {
+    setActiveDataKey(dataKey);
+  };
+
+  const handleMouseLeave = () => {
+    setActiveDataKey(null);
+  };
+
   return (
-    <div className="bg-tactflux-gray rounded-xl shadow-card border border-white/5 animate-slide-up">
+    <div className="bg-tactflux-gray rounded-xl shadow-card border border-white/5 animate-slide-up transition-all duration-300 hover:shadow-md hover:border-white/10">
       <div className="p-6 border-b border-white/5">
         <h3 className="text-lg font-semibold">Plattformleistung</h3>
         <p className="text-sm text-gray-400">Kandidatenvolumen und Testabschlussraten</p>
@@ -61,15 +72,33 @@ const ProgressChart = () => {
               yAxisId="right"
             />
             <Tooltip content={<CustomTooltip />} />
+            <Legend 
+              formatter={(value) => (
+                <span className="text-sm transition-all duration-300 cursor-pointer hover:text-white">
+                  {value === 'candidates' ? 'Kandidaten' : 'Abschlussrate'}
+                </span>
+              )}
+              onMouseEnter={(e) => handleMouseEnter(e.dataKey)}
+              onMouseLeave={handleMouseLeave}
+            />
             <Line 
               yAxisId="left"
               type="monotone" 
               dataKey="candidates" 
               name="Kandidaten" 
               stroke="#00FFFF" 
-              strokeWidth={2}
+              strokeWidth={activeDataKey === 'candidates' ? 3 : 2}
               dot={{ fill: '#00FFFF', strokeWidth: 0, r: 4 }} 
-              activeDot={{ r: 6, stroke: '#00FFFF', strokeWidth: 2 }} 
+              activeDot={{ 
+                r: 6, 
+                stroke: '#00FFFF', 
+                strokeWidth: 2,
+                className: "animate-pulse" 
+              }}
+              className={cn(
+                "transition-all duration-300",
+                activeDataKey === 'candidates' && "filter drop-shadow(0 0 2px rgba(0, 255, 255, 0.7))"
+              )}
             />
             <Line 
               yAxisId="right"
@@ -77,9 +106,18 @@ const ProgressChart = () => {
               dataKey="completionRate" 
               name="Abschlussrate" 
               stroke="#FF007F" 
-              strokeWidth={2}
+              strokeWidth={activeDataKey === 'completionRate' ? 3 : 2}
               dot={{ fill: '#FF007F', strokeWidth: 0, r: 4 }} 
-              activeDot={{ r: 6, stroke: '#FF007F', strokeWidth: 2 }} 
+              activeDot={{ 
+                r: 6, 
+                stroke: '#FF007F', 
+                strokeWidth: 2,
+                className: "animate-pulse" 
+              }}
+              className={cn(
+                "transition-all duration-300",
+                activeDataKey === 'completionRate' && "filter drop-shadow(0 0 2px rgba(255, 0, 127, 0.7))"
+              )}
             />
           </LineChart>
         </ResponsiveContainer>

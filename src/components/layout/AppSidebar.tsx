@@ -61,17 +61,23 @@ const NavItem = ({
     <Link
       to={href}
       className={cn(
-        "flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-200 group min-h-[44px]",
+        "flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-300 group min-h-[44px] cursor-pointer hover:bg-[var(--company-accent)]/15 hover:shadow-md hover:scale-[1.02]",
         isActive 
-          ? "bg-gradient-to-r from-[var(--company-primary)]/20 to-[var(--company-accent)]/20 text-white border-l-4 border-[var(--company-primary)]" 
-          : "text-muted-foreground hover:text-foreground hover:bg-[var(--company-accent)]/10"
+          ? "bg-gradient-to-r from-[var(--company-primary)]/20 to-[var(--company-accent)]/20 text-white border-l-4 border-[var(--company-primary)] animate-pulse-glow" 
+          : "text-muted-foreground hover:text-foreground active:scale-[0.98]"
       )}
     >
       <Icon className={cn(
         "h-5 w-5 transition-all shrink-0",
-        isActive ? "text-[var(--company-primary)]" : "text-muted-foreground group-hover:text-[var(--company-primary)]"
+        isActive 
+          ? "text-[var(--company-primary)]" 
+          : "text-muted-foreground group-hover:text-[var(--company-primary)] group-hover:rotate-3 transition-transform"
       )} />
-      <span>{label}</span>
+      <span className={cn(
+        "transition-all",
+        isActive && "font-medium",
+        "group-hover:translate-x-1"
+      )}>{label}</span>
     </Link>
   );
 };
@@ -99,7 +105,7 @@ const AppSidebar = () => {
   return (
     <aside className="h-full w-full bg-sidebar border-r border-sidebar-border flex flex-col">
       <div className="p-4 flex flex-col items-start justify-start">
-        <div className="relative w-40 h-16 mb-2">
+        <div className="relative w-40 h-16 mb-2 transition-all hover:scale-[1.03] duration-300">
           <img 
             src={companyLogo} 
             alt="Company Logo" 
@@ -107,10 +113,10 @@ const AppSidebar = () => {
           />
         </div>
         <div className={cn(
-          "text-xs font-medium uppercase px-2 py-1 rounded-md",
-          userRole === 'basic' && "bg-blue-100 text-blue-800",
-          userRole === 'pro' && "bg-purple-100 text-purple-800",
-          userRole === 'enterprise' && "bg-green-100 text-green-800"
+          "text-xs font-medium uppercase px-2 py-1 rounded-md transition-all duration-300 shadow-sm",
+          userRole === 'basic' && "bg-blue-100 text-blue-800 hover:bg-blue-200",
+          userRole === 'pro' && "bg-purple-100 text-purple-800 hover:bg-purple-200",
+          userRole === 'enterprise' && "bg-green-100 text-green-800 hover:bg-green-200"
         )}>
           {userRole === 'basic' && 'Basic Plan'}
           {userRole === 'pro' && 'Pro Plan'}
@@ -159,10 +165,10 @@ const AppSidebar = () => {
 
       <div className="mt-auto px-3 py-4 border-t border-sidebar-border">
         <div 
-          className="flex items-center gap-3 px-3 py-3 rounded-md text-muted-foreground cursor-pointer hover:bg-muted/20 hover:text-foreground transition-all duration-200 min-h-[44px]"
+          className="flex items-center gap-3 px-3 py-3 rounded-md text-muted-foreground cursor-pointer hover:bg-red-500/20 hover:text-red-400 transition-all duration-300 min-h-[44px] hover:shadow-md active:scale-[0.98]"
           onClick={handleLogout}
         >
-          <LogOut className="h-5 w-5 shrink-0" />
+          <LogOut className="h-5 w-5 shrink-0 transition-transform group-hover:rotate-12" />
           <span>Abmelden</span>
         </div>
       </div>
@@ -171,4 +177,3 @@ const AppSidebar = () => {
 };
 
 export default AppSidebar;
-
