@@ -35,7 +35,7 @@ export const exportToCSV = (data: any[], filename: string) => {
 };
 
 // PDF Export Funktion für Simulationen
-export const exportToPDF = (data: SimulationData[], filename: string) => {
+export const exportToPDF = (data: any[], filename: string) => {
   // Erstelle ein neues PDF-Dokument
   const doc = new jsPDF();
   
@@ -50,11 +50,11 @@ export const exportToPDF = (data: SimulationData[], filename: string) => {
   // Bereite die Tabellendaten vor
   const tableHeaders = [['Titel', 'Datum', 'Status', 'Kandidaten', 'Score']];
   const tableData = data.map(sim => [
-    sim.title,
+    sim.title || sim.name || '',
     new Date(sim.date).toLocaleDateString('de-DE'),
     sim.status === 'completed' ? 'Abgeschlossen' : 
       sim.status === 'in-progress' ? 'In Bearbeitung' : 'Geplant',
-    String(sim.candidates),
+    String(sim.candidates || 0),
     sim.score ? `${sim.score}%` : '-'
   ]);
   
