@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -38,7 +37,6 @@ import APIEndpoints from '@/components/tier/APIEndpoints';
 import { exportToCSV, exportToPDF } from '@/utils/exportUtils';
 import { useToast } from '@/components/ui/use-toast';
 
-// Dummy data for simulations
 const simulationsData: SimulationData[] = [
   {
     id: "sim-001",
@@ -92,13 +90,11 @@ const simulationsData: SimulationData[] = [
   }
 ];
 
-// Helper function to format date
 const formatDate = (dateString: string) => {
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString('de-DE', options);
 };
 
-// Status badge component
 const StatusBadge = ({ status }: { status: SimulationData['status'] }) => {
   switch (status) {
     case "completed":
@@ -127,7 +123,6 @@ const StatusBadge = ({ status }: { status: SimulationData['status'] }) => {
   }
 };
 
-// PieChart component
 const SimulationPieChart = ({ data }: { data: ChartData[] }) => {
   const COLORS = ['#10B981', '#EF4444'];
   
@@ -159,7 +154,6 @@ const SimulationsPage = () => {
   const [activeTab, setActiveTab] = useState('all');
   const { toast } = useToast();
   
-  // Filter simulations based on search term and active tab
   const filteredSimulations = simulationsData.filter(simulation => {
     const matchesSearch = simulation.title.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTab = activeTab === 'all' || simulation.status === activeTab;
@@ -181,6 +175,11 @@ const SimulationsPage = () => {
       description: "Die Simulationsdaten wurden als PDF exportiert",
     });
   };
+
+  const totalCandidates = simulationsData.reduce((sum, sim) => {
+    const candidates = sim.candidates || 0;
+    return sum + (typeof candidates === 'number' ? candidates : parseInt(candidates, 10) || 0);
+  }, 0);
 
   return (
     <Layout>
@@ -229,7 +228,7 @@ const SimulationsPage = () => {
               <div className="flex items-center">
                 <Users className="h-5 w-5 text-tactflux-violet mr-2" />
                 <span className="text-2xl font-bold">
-                  {simulationsData.reduce((sum, sim) => sum + sim.candidates, 0)}
+                  {totalCandidates}
                 </span>
               </div>
             </CardContent>
