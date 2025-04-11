@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -12,7 +11,6 @@ import { CandidateData } from '@/types/chart';
 import { exportToCSV } from '@/utils/exportUtils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-// Mock data for shortlisted candidates
 const mockShortlistedCandidates: CandidateData[] = [
   {
     id: '2',
@@ -48,7 +46,6 @@ const mockShortlistedCandidates: CandidateData[] = [
   }
 ];
 
-// Extract all unique module names from the candidates
 const getUniqueModules = (candidates: CandidateData[]): string[] => {
   const modules = new Set<string>();
   
@@ -61,7 +58,6 @@ const getUniqueModules = (candidates: CandidateData[]): string[] => {
   return Array.from(modules);
 };
 
-// Find the best score for a specific module across all candidates
 const findBestScoreForModule = (candidates: CandidateData[], moduleName: string): number => {
   let bestScore = 0;
   
@@ -75,7 +71,6 @@ const findBestScoreForModule = (candidates: CandidateData[], moduleName: string)
   return bestScore;
 };
 
-// Get the score color based on value
 const getScoreColor = (score: number, bestScore: number): string => {
   if (score === bestScore && score > 0) return 'bg-green-500/10 text-green-500';
   if (score >= 80) return 'text-green-500';
@@ -90,7 +85,6 @@ const CandidateShortlistPage: React.FC = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   
-  // Remove candidate from shortlist
   const removeFromShortlist = (id: string) => {
     setShortlistedCandidates(prev => prev.filter(candidate => candidate.id !== id));
     toast({
@@ -99,9 +93,7 @@ const CandidateShortlistPage: React.FC = () => {
     });
   };
   
-  // Export comparison as CSV
   const exportComparison = () => {
-    // Transform data for export
     const exportData = shortlistedCandidates.map(candidate => {
       const data: Record<string, any> = {
         name: candidate.name,
@@ -109,7 +101,6 @@ const CandidateShortlistPage: React.FC = () => {
         score: candidate.score
       };
       
-      // Add module scores
       candidate.moduleScores?.forEach(module => {
         data[module.name] = module.score;
       });
@@ -163,7 +154,7 @@ const CandidateShortlistPage: React.FC = () => {
               <CardTitle>Vergleichsmatrix ({shortlistedCandidates.length} Kandidaten)</CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <ScrollArea className="w-full" orientation="horizontal">
+              <ScrollArea className="w-full">
                 <div className={`min-w-[800px] ${isMobile ? 'pb-4' : ''}`}>
                   <div className="sticky top-0 z-10 bg-card border-b border-border">
                     <div className="grid grid-cols-[250px_repeat(auto-fill,minmax(100px,1fr))]">
