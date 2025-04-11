@@ -24,14 +24,14 @@ const NavItem = ({ href, icon: Icon, label, isActive = false }: NavItemProps) =>
     <Link
       to={href}
       className={cn(
-        "flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 group",
+        "flex items-center gap-3 px-3 py-3 rounded-md transition-all duration-200 group min-h-[44px]",
         isActive 
           ? "bg-gradient-to-r from-tactflux-turquoise/20 to-tactflux-violet/20 text-white" 
           : "text-muted-foreground hover:text-foreground hover:bg-muted/20"
       )}
     >
       <Icon className={cn(
-        "h-5 w-5 transition-all",
+        "h-5 w-5 transition-all shrink-0",
         isActive ? "text-tactflux-turquoise" : "text-muted-foreground group-hover:text-tactflux-turquoise"
       )} />
       <span>{label}</span>
@@ -55,7 +55,7 @@ const AppSidebar = () => {
   };
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-64 bg-sidebar border-r border-sidebar-border flex flex-col z-10">
+    <aside className="h-full w-full bg-sidebar border-r border-sidebar-border flex flex-col">
       <div className="p-6 flex justify-start">
         <div className="relative w-36 h-36">
           <img 
@@ -66,7 +66,7 @@ const AppSidebar = () => {
         </div>
       </div>
 
-      <div className="px-3 py-2">
+      <div className="px-3 py-2 overflow-y-auto flex-1">
         <p className="text-xs font-medium text-muted-foreground uppercase px-3 py-2">Admin Menü</p>
         <nav className="flex flex-col gap-1">
           <NavItem href="/" icon={LayoutDashboard} label="Dashboard" isActive={pathname === '/'} />
@@ -79,10 +79,10 @@ const AppSidebar = () => {
 
       <div className="mt-auto px-3 py-4 border-t border-sidebar-border">
         <div 
-          className="flex items-center gap-3 px-3 py-2 rounded-md text-muted-foreground cursor-pointer hover:bg-muted/20 hover:text-foreground transition-all duration-200"
+          className="flex items-center gap-3 px-3 py-3 rounded-md text-muted-foreground cursor-pointer hover:bg-muted/20 hover:text-foreground transition-all duration-200 min-h-[44px]"
           onClick={handleLogout}
         >
-          <LogOut className="h-5 w-5" />
+          <LogOut className="h-5 w-5 shrink-0" />
           <span>Abmelden</span>
         </div>
       </div>

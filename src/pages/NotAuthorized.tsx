@@ -9,7 +9,7 @@ const NotAuthorized = () => {
   
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-card p-8 rounded-lg border border-border shadow-lg text-center">
+      <div className="w-full max-w-md bg-card p-6 sm:p-8 rounded-lg border border-border shadow-lg text-center">
         <ShieldAlert className="h-16 w-16 text-tactflux-pink mx-auto mb-4" />
         
         <h1 className="text-2xl font-bold mb-2">Zugriff verweigert</h1>
@@ -21,7 +21,7 @@ const NotAuthorized = () => {
         
         <div className="space-y-3">
           <Button 
-            className="w-full bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet"
+            className="w-full h-12 bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet"
             onClick={() => navigate('/')}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -30,7 +30,7 @@ const NotAuthorized = () => {
           
           <Button 
             variant="outline" 
-            className="w-full"
+            className="w-full h-12"
             onClick={() => navigate('/login')}
           >
             Anmelden mit anderem Konto

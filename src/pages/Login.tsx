@@ -63,11 +63,11 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-md animate-fade-in">
-        <div className="text-center mb-8 mt-12">
-          <div className="flex items-center justify-center mb-8">
-            <div className="relative w-64 h-64">
+        <div className="text-center mb-8 mt-6 sm:mt-12">
+          <div className="flex items-center justify-center mb-6 sm:mb-8">
+            <div className="relative w-48 h-48 sm:w-64 sm:h-64">
               <img 
                 src="/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png" 
                 alt="TactFlux Logo" 
@@ -79,7 +79,7 @@ const Login = () => {
           <p className="text-muted-foreground">Gib deine Anmeldedaten ein, um auf das Admin-Dashboard zuzugreifen</p>
         </div>
         
-        <div className="bg-card p-8 rounded-xl border border-border shadow-card">
+        <div className="bg-card p-6 sm:p-8 rounded-xl border border-border shadow-card">
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium block">
@@ -93,7 +93,7 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@tactflux.com"
-                  className="pl-10 bg-background border-input focus:border-primary focus:ring-primary"
+                  className="pl-10 bg-background border-input focus:border-primary focus:ring-primary h-12"
                 />
               </div>
             </div>
@@ -110,7 +110,7 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="pl-10 bg-background border-input focus:border-primary focus:ring-primary"
+                  className="pl-10 bg-background border-input focus:border-primary focus:ring-primary h-12"
                 />
               </div>
             </div>
@@ -123,7 +123,7 @@ const Login = () => {
                 value={role} 
                 onValueChange={(value: UserRole) => setRole(value)}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full h-12">
                   <SelectValue placeholder="Wähle eine Benutzer-Stufe" />
                 </SelectTrigger>
                 <SelectContent>
@@ -139,7 +139,7 @@ const Login = () => {
             
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet hover:opacity-90 transition-all"
+              className="w-full h-12 bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet hover:opacity-90 transition-all"
               disabled={isLoading}
             >
               {isLoading ? "Authentifiziere..." : "Anmelden"}

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -7,24 +8,24 @@ const StatisticsPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-2xl font-bold">Kandidatenverwaltung</h1>
             <p className="text-gray-400 mt-1">Bewerbungen prüfen und verwalten</p>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-white/5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Badge variant="outline" className="bg-white/5 px-3 py-1.5 text-xs">
                 Zeige 7 von 1.245 Kandidaten
               </Badge>
             </div>
             
-            <div className="flex">
-              <button className="px-3 py-2 border border-white/10 rounded-l-md hover:bg-white/5">
+            <div className="flex w-full sm:w-auto">
+              <button className="flex-1 sm:flex-none px-3 py-2 border border-white/10 rounded-l-md hover:bg-white/5 text-sm min-h-[44px]">
                 Vorherige
               </button>
-              <button className="px-3 py-2 border-y border-r border-white/10 rounded-r-md hover:bg-white/5">
+              <button className="flex-1 sm:flex-none px-3 py-2 border-y border-r border-white/10 rounded-r-md hover:bg-white/5 text-sm min-h-[44px]">
                 Nächste
               </button>
             </div>
