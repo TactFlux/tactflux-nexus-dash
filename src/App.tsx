@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import CandidatesPage from "./pages/candidates";
 import CandidateDetailPage from "./pages/candidates/[id]";
+import CandidateShortlistPage from "./pages/candidates/shortlist";
 import SimulationsPage from "./pages/simulations";
 import SimulationDetailPage from "./pages/simulations/[id]";
 import StatisticsPage from "./pages/statistics";
@@ -39,6 +40,11 @@ const App = () => (
               <Route path="/candidates" element={
                 <ProtectedRoute>
                   <CandidatesPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/candidates/shortlist" element={
+                <ProtectedRoute>
+                  <CandidateShortlistPage />
                 </ProtectedRoute>
               } />
               <Route path="/candidates/:id" element={
