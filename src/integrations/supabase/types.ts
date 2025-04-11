@@ -36,6 +36,63 @@ export type Database = {
         }
         Relationships: []
       }
+      report_delivery_logs: {
+        Row: {
+          completed_tests_count: number
+          created_at: string
+          id: string
+          recipients_count: number
+          report_date: string
+          tests_count: number
+        }
+        Insert: {
+          completed_tests_count: number
+          created_at?: string
+          id?: string
+          recipients_count: number
+          report_date: string
+          tests_count: number
+        }
+        Update: {
+          completed_tests_count?: number
+          created_at?: string
+          id?: string
+          recipients_count?: number
+          report_date?: string
+          tests_count?: number
+        }
+        Relationships: []
+      }
+      report_recipients: {
+        Row: {
+          active: boolean | null
+          company_name: string | null
+          created_at: string
+          email: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean | null
+          company_name?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean | null
+          company_name?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -48,6 +105,10 @@ export type Database = {
       generate_api_key: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      is_enterprise_user: {
+        Args: { user_uuid: string }
+        Returns: boolean
       }
     }
     Enums: {

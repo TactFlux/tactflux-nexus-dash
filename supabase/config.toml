@@ -3,3 +3,6 @@ project_id = "qcszoetnsqmrcdankful"
 
 [functions.api-results]
 verify_jwt = false
+
+[functions.weekly-report]
+verify_jwt = false

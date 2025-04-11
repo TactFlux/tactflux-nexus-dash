@@ -7,19 +7,30 @@ import {
   FileText,
   Settings,
   LogOut,
-  PieChart
+  PieChart,
+  BarChart,
+  Key
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
+import { useUserTier } from '@/contexts/UserTierContext';
 
 interface NavItemProps {
   href: string;
   icon: React.ElementType;
   label: string;
   isActive?: boolean;
+  isEnterpriseOnly?: boolean;
 }
 
-const NavItem = ({ href, icon: Icon, label, isActive = false }: NavItemProps) => {
+const NavItem = ({ href, icon: Icon, label, isActive = false, isEnterpriseOnly = false }: NavItemProps) => {
+  const { isEnterprise } = useUserTier();
+  
+  // Hide enterprise-only items if user is not an enterprise user
+  if (isEnterpriseOnly && !isEnterprise) {
+    return null;
+  }
+  
   return (
     <Link
       to={href}
@@ -44,6 +55,7 @@ const AppSidebar = () => {
   const location = useLocation();
   const { toast } = useToast();
   const pathname = location.pathname;
+  const { isEnterprise } = useUserTier();
 
   const handleLogout = () => {
     localStorage.removeItem('tactflux-admin');
@@ -73,6 +85,27 @@ const AppSidebar = () => {
           <NavItem href="/candidates" icon={Users} label="Bewerber" isActive={pathname === '/candidates'} />
           <NavItem href="/simulations" icon={FileText} label="Simulationen" isActive={pathname === '/simulations'} />
           <NavItem href="/statistics" icon={PieChart} label="Statistiken" isActive={pathname === '/statistics'} />
+          
+          {isEnterprise && (
+            <>
+              <p className="text-xs font-medium text-muted-foreground uppercase px-3 py-2 mt-4">Enterprise</p>
+              <NavItem 
+                href="/admin/api-keys" 
+                icon={Key} 
+                label="API-Zugriff" 
+                isActive={pathname === '/admin/api-keys'} 
+                isEnterpriseOnly 
+              />
+              <NavItem 
+                href="/admin/report-settings" 
+                icon={BarChart} 
+                label="Reporting" 
+                isActive={pathname === '/admin/report-settings'} 
+                isEnterpriseOnly 
+              />
+            </>
+          )}
+          
           <NavItem href="/settings" icon={Settings} label="Einstellungen" isActive={pathname === '/settings'} />
         </nav>
       </div>

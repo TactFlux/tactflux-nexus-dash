@@ -20,6 +20,7 @@ import CandidateReportPage from "./pages/candidates/[id]/report";
 import { UserTierProvider } from "./contexts/UserTierContext";
 import ApiKeysPage from "./pages/admin/api-keys";
 import ApiDocsPage from "./pages/admin/api-docs";
+import ReportSettingsPage from "./pages/admin/report-settings";
 
 const queryClient = new QueryClient();
 
@@ -82,6 +83,11 @@ const App = () => (
               <Route path="/admin/api-docs" element={
                 <ProtectedRoute>
                   <ApiDocsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/report-settings" element={
+                <ProtectedRoute>
+                  <ReportSettingsPage />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
