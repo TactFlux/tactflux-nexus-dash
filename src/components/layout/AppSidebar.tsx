@@ -93,16 +93,22 @@ const AppSidebar = () => {
   };
 
   const companyLogo = user?.company?.logoUrl || "/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png";
+  const { userRole } = useUserTier();
 
   return (
     <aside className="h-full w-full bg-sidebar border-r border-sidebar-border flex flex-col">
       <div className="p-4 flex flex-col items-start justify-start">
-        <div className="relative w-40 h-16 mb-4">
+        <div className="relative w-40 h-16 mb-2">
           <img 
             src={companyLogo} 
             alt="Company Logo" 
             className="w-full h-full object-contain object-left"
           />
+        </div>
+        <div className="text-xs font-medium text-muted-foreground uppercase px-1 py-1 rounded-md bg-muted/50">
+          {userRole === 'basic' && 'Basic Plan'}
+          {userRole === 'pro' && 'Pro Plan'}
+          {userRole === 'enterprise' && 'Enterprise Plan'}
         </div>
       </div>
 
