@@ -21,9 +21,10 @@ export interface CandidateData {
   name: string;
   email: string;
   position: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'rejected';
+  status: 'pending' | 'in-progress' | 'completed' | 'rejected' | 'interview' | 'hired';
   score: number;
   date?: string;
+  favorite?: boolean;
   moduleScores?: {
     name: string;
     score: number;

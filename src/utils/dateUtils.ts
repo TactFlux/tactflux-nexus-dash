@@ -7,3 +7,21 @@ export const formatDate = (dateString: string): string => {
     year: 'numeric'
   });
 };
+
+export const getDateRangeFilter = (range: string): Date | null => {
+  const today = new Date();
+  
+  switch (range) {
+    case '7days':
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(today.getDate() - 7);
+      return sevenDaysAgo;
+    case '30days':
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(today.getDate() - 30);
+      return thirtyDaysAgo;
+    case 'all':
+    default:
+      return null;
+  }
+};
