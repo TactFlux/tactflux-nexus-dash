@@ -189,7 +189,6 @@ const SimulationDetailPage = () => {
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Info Card */}
           <Card className="bg-tactflux-gray border-white/5 shadow-card lg:col-span-2">
             <CardHeader className="border-b border-white/5">
               <div className="flex justify-between items-start">
@@ -261,7 +260,6 @@ const SimulationDetailPage = () => {
             </CardContent>
           </Card>
           
-          {/* Actions Card */}
           <Card className="bg-tactflux-gray border-white/5 shadow-card">
             <CardHeader className="border-b border-white/5">
               <h2 className="text-xl font-semibold">Aktionen</h2>
@@ -286,7 +284,6 @@ const SimulationDetailPage = () => {
           </Card>
         </div>
         
-        {/* Tabs for different views */}
         <Tabs defaultValue="results" className="w-full">
           <TabsList className="mb-6">
             <TabsTrigger value="results">Ergebnisse</TabsTrigger>
