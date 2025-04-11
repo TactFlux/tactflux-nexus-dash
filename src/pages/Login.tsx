@@ -12,12 +12,12 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { UserRole } from '@/contexts/UserTierContext';
+import { UserRole } from '@/types/team';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState<UserRole>('basic');
+  const [role, setRole] = useState<UserRole>('admin');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -39,7 +39,13 @@ const Login = () => {
 
     // Check admin credentials (in a real app, this would be done server-side)
     if (email === 'liam.ts@icloud.com' && password === 'hesk-hueu-jrjd') {
-      // Set authentication in local storage
+      // Set authentication in local storage with correct role and plan mapping
+      const planMapping = {
+        admin: 'enterprise',
+        hr: 'pro',
+        viewer: 'free'
+      };
+      
       localStorage.setItem('tactflux-admin', JSON.stringify({ 
         isAdmin: true, 
         role,
@@ -49,7 +55,7 @@ const Login = () => {
         company: {
           id: 'default-company',
           name: 'TactFlux Admin',
-          plan: role === 'basic' ? 'free' : role === 'pro' ? 'pro' : 'enterprise',
+          plan: planMapping[role],
           logoUrl: '/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png',
           primaryColor: '#6E59A5',
           accentColor: '#1EAEDB',
@@ -132,23 +138,23 @@ const Login = () => {
             
             <div className="space-y-2">
               <label htmlFor="role" className="text-sm font-medium block">
-                Benutzer-Stufe
+                Rolle
               </label>
               <Select 
                 value={role} 
                 onValueChange={(value: UserRole) => setRole(value)}
               >
                 <SelectTrigger className="w-full h-12">
-                  <SelectValue placeholder="Wähle eine Benutzer-Stufe" />
+                  <SelectValue placeholder="Wähle eine Rolle" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="basic">Basic</SelectItem>
-                  <SelectItem value="pro">Pro</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
+                  <SelectItem value="admin">Administrator (Enterprise)</SelectItem>
+                  <SelectItem value="hr">HR Manager (Pro)</SelectItem>
+                  <SelectItem value="viewer">Betrachter (Free)</SelectItem>
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground mt-1">
-                Für Demo-Zwecke: Wähle die Benutzer-Stufe, mit der du dich anmelden möchtest.
+                Wähle die Rolle, mit der du dich anmelden möchtest. Die Rolle bestimmt deine Zugriffsrechte im System.
               </p>
             </div>
             
