@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
@@ -105,7 +106,12 @@ const AppSidebar = () => {
             className="w-full h-full object-contain object-left"
           />
         </div>
-        <div className="text-xs font-medium text-muted-foreground uppercase px-1 py-1 rounded-md bg-muted/50">
+        <div className={cn(
+          "text-xs font-medium uppercase px-2 py-1 rounded-md",
+          userRole === 'basic' && "bg-blue-100 text-blue-800",
+          userRole === 'pro' && "bg-purple-100 text-purple-800",
+          userRole === 'enterprise' && "bg-green-100 text-green-800"
+        )}>
           {userRole === 'basic' && 'Basic Plan'}
           {userRole === 'pro' && 'Pro Plan'}
           {userRole === 'enterprise' && 'Enterprise Plan'}
@@ -165,3 +171,4 @@ const AppSidebar = () => {
 };
 
 export default AppSidebar;
+
