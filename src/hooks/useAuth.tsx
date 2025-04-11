@@ -11,11 +11,13 @@ export interface Company {
   welcomeMessage?: string;
 }
 
+export type UserRole = 'admin' | 'hr' | 'viewer';
+
 export interface User {
   id: string;
   isAdmin: boolean;
   email?: string;
-  role: 'admin' | 'user';
+  role: UserRole;
   companyId: string;
   company?: Company;
 }
@@ -42,11 +44,11 @@ export const useAuth = (): AuthState => {
         try {
           const parsed = JSON.parse(adminData);
           setAuthState({
-            isAuthenticated: !!parsed.isAdmin,
+            isAuthenticated: !!parsed.isAdmin || parsed.role === 'admin' || parsed.role === 'hr',
             isLoading: false,
             user: {
               id: parsed.id || 'default-user-id',
-              isAdmin: !!parsed.isAdmin,
+              isAdmin: !!parsed.isAdmin || parsed.role === 'admin',
               email: parsed.email || '',
               role: parsed.role || 'admin',
               companyId: parsed.companyId || '',

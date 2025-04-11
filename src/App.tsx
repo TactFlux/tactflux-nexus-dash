@@ -23,6 +23,8 @@ import ApiKeysPage from "./pages/admin/api-keys";
 import ApiDocsPage from "./pages/admin/api-docs";
 import ReportSettingsPage from "./pages/admin/report-settings";
 import CompanySettingsPage from "./pages/admin/company-settings";
+import TeamPage from "./pages/admin/team";
+import InvitePage from "./pages/invite/[token]";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +40,7 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/not-authorized" element={<NotAuthorized />} />
+              <Route path="/invite/:token" element={<InvitePage />} />
               <Route path="/" element={
                 <ProtectedRoute>
                   <Index />
@@ -96,6 +99,11 @@ const App = () => (
               <Route path="/admin/company-settings" element={
                 <ProtectedRoute>
                   <CompanySettingsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/team" element={
+                <ProtectedRoute>
+                  <TeamPage />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

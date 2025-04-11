@@ -10,7 +10,8 @@ import {
   PieChart,
   BarChart,
   Key,
-  Building
+  Building,
+  UserPlus
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/components/ui/use-toast';
@@ -25,6 +26,7 @@ interface NavItemProps {
   isActive?: boolean;
   isEnterpriseOnly?: boolean;
   isProOnly?: boolean;
+  isAdminOnly?: boolean;
 }
 
 const NavItem = ({ 
@@ -33,7 +35,8 @@ const NavItem = ({
   label, 
   isActive = false, 
   isEnterpriseOnly = false,
-  isProOnly = false
+  isProOnly = false,
+  isAdminOnly = false
 }: NavItemProps) => {
   const { isEnterprise } = useUserTier();
   const { user } = useAuth();
@@ -42,6 +45,7 @@ const NavItem = ({
   const userPlan = user?.company?.plan || 'free';
   const hasProAccess = userPlan === 'pro' || userPlan === 'enterprise';
   const hasEnterpriseAccess = userPlan === 'enterprise';
+  const isAdmin = user?.role === 'admin';
   
   // Hide enterprise-only items if user is not an enterprise user
   if (isEnterpriseOnly && !hasEnterpriseAccess) {
@@ -50,6 +54,11 @@ const NavItem = ({
   
   // Hide pro-only items if user doesn't have pro access
   if (isProOnly && !hasProAccess) {
+    return null;
+  }
+  
+  // Hide admin-only items if user is not an admin
+  if (isAdminOnly && !isAdmin) {
     return null;
   }
   
@@ -92,6 +101,7 @@ const AppSidebar = () => {
   const companyLogo = user?.company?.logoUrl || "/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png";
   const companyName = user?.company?.name || "TactFlux";
   const companyPlan = user?.company?.plan || "free";
+  const isAdmin = user?.role === 'admin';
 
   return (
     <aside className="h-full w-full bg-sidebar border-r border-sidebar-border flex flex-col">
@@ -119,7 +129,14 @@ const AppSidebar = () => {
           <NavItem href="/simulations" icon={FileText} label="Simulationen" isActive={pathname === '/simulations'} />
           <NavItem href="/statistics" icon={PieChart} label="Statistiken" isActive={pathname === '/statistics'} />
           
-          <p className="text-xs font-medium text-muted-foreground uppercase px-3 py-2 mt-4">Enterprise</p>
+          <p className="text-xs font-medium text-muted-foreground uppercase px-3 py-2 mt-4">Administration</p>
+          <NavItem 
+            href="/admin/team" 
+            icon={UserPlus} 
+            label="Team-Verwaltung" 
+            isActive={pathname === '/admin/team'} 
+            isAdminOnly
+          />
           <NavItem 
             href="/admin/api-keys" 
             icon={Key} 
@@ -139,6 +156,7 @@ const AppSidebar = () => {
             icon={Building} 
             label="Unternehmenseinstellungen" 
             isActive={pathname === '/admin/company-settings'} 
+            isAdminOnly
           />
           
           <NavItem href="/settings" icon={Settings} label="Einstellungen" isActive={pathname === '/settings'} />
