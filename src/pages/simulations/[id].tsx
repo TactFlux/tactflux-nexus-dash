@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -27,6 +26,7 @@ interface Simulation {
   gpt_detection_count: number;
   avg_gpt_probability: number;
   suspicious_answers_rate: number;
+  target_role?: string;
   role?: string;
 }
 
@@ -70,7 +70,7 @@ const SimulationDetailPage = () => {
             gpt_detection_count: 12,
             avg_gpt_probability: 28,
             suspicious_answers_rate: 15,
-            role: 'Designer'
+            target_role: 'Designer'
           },
           {
             id: '2',
@@ -84,7 +84,7 @@ const SimulationDetailPage = () => {
             gpt_detection_count: 45,
             avg_gpt_probability: 76,
             suspicious_answers_rate: 62,
-            role: 'Entwickler'
+            target_role: 'Entwickler'
           },
           {
             id: '3',
@@ -98,7 +98,7 @@ const SimulationDetailPage = () => {
             gpt_detection_count: 5,
             avg_gpt_probability: 12,
             suspicious_answers_rate: 8,
-            role: 'Manager'
+            target_role: 'Manager'
           }
         ];
         

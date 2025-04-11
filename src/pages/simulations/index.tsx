@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -23,7 +22,6 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip, Legend, Line, LineChart } from 'recharts';
 import { useAuth } from '@/hooks/useAuth';
 
-// Type definitions
 interface Simulation {
   id: string;
   name: string;
@@ -36,14 +34,8 @@ interface Simulation {
   gpt_detection_count: number;
   avg_gpt_probability: number;
   suspicious_answers_rate: number;
-  role?: string; // Add optional role field
-}
-
-interface ChartData {
-  name: string;
-  avgScore: number;
-  completionRate: number;
-  candidates: number;
+  target_role?: string;
+  role?: string;
 }
 
 const difficultyColors = {
@@ -62,7 +54,7 @@ const SimulationsPage = () => {
   const [simulations, setSimulations] = useState<Simulation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [timeFilter, setTimeFilter] = useState('30'); // days
+  const [timeFilter, setTimeFilter] = useState('30');
   const [moduleFilter, setModuleFilter] = useState('all');
   const [roleFilter, setRoleFilter] = useState('all');
   const { toast } = useToast();
@@ -79,11 +71,9 @@ const SimulationsPage = () => {
         return;
       }
       
-      // Get user role from metadata
       const role = session.user?.user_metadata?.role || null;
       setUserRole(role);
       
-      // Redirect if not a dev
       if (role !== 'dev') {
         navigate('/not-authorized');
         toast({
@@ -102,70 +92,64 @@ const SimulationsPage = () => {
       try {
         setLoading(true);
         
-        // Convert timeFilter to date
         let dateFilter = new Date();
         if (timeFilter !== 'all') {
           dateFilter.setDate(dateFilter.getDate() - parseInt(timeFilter));
         }
         
-        // For now, we'll use dummy data as the table doesn't exist yet
-        // In a real app, this would query the actual database
         const dummyData: Simulation[] = [
           {
             id: '1',
             name: 'Kreatives Denken',
             description: 'Test für kreative Problemlösung',
             completion_rate: 78,
-            avg_time_seconds: 1320, // 22 minutes
+            avg_time_seconds: 1320,
             difficulty: 'Mittel',
             candidates_count: 145,
             avg_score: 72,
             gpt_detection_count: 12,
             avg_gpt_probability: 28,
             suspicious_answers_rate: 15,
-            role: 'Designer'
+            target_role: 'Designer'
           },
           {
             id: '2',
             name: 'Logisches Denken',
             description: 'Test für analytische Fähigkeiten',
             completion_rate: 92,
-            avg_time_seconds: 1500, // 25 minutes
+            avg_time_seconds: 1500,
             difficulty: 'Schwer',
             candidates_count: 203,
             avg_score: 68,
             gpt_detection_count: 45,
             avg_gpt_probability: 76,
             suspicious_answers_rate: 62,
-            role: 'Entwickler'
+            target_role: 'Entwickler'
           },
           {
             id: '3',
             name: 'Kommunikation',
             description: 'Test für kommunikative Fähigkeiten',
             completion_rate: 95,
-            avg_time_seconds: 900, // 15 minutes
+            avg_time_seconds: 900,
             difficulty: 'Einfach',
             candidates_count: 312,
             avg_score: 88,
             gpt_detection_count: 5,
             avg_gpt_probability: 12,
             suspicious_answers_rate: 8,
-            role: 'Manager'
+            target_role: 'Manager'
           }
         ];
         
-        // Apply filters to dummy data
         let filteredData = [...dummyData];
         
-        // Apply module filter if not 'all'
         if (moduleFilter !== 'all') {
           filteredData = filteredData.filter(sim => sim.id === moduleFilter);
         }
         
-        // Apply role filter if not 'all'
         if (roleFilter !== 'all') {
-          filteredData = filteredData.filter(sim => sim.role === roleFilter);
+          filteredData = filteredData.filter(sim => sim.target_role === roleFilter || sim.role === roleFilter);
         }
         
         setSimulations(filteredData);
@@ -187,7 +171,6 @@ const SimulationsPage = () => {
     }
   }, [timeFilter, moduleFilter, roleFilter, toast, userRole]);
 
-  // Convert simulation data for charts
   const chartData: ChartData[] = simulations.map(sim => ({
     name: sim.name,
     avgScore: sim.avg_score,
@@ -195,8 +178,7 @@ const SimulationsPage = () => {
     candidates: sim.candidates_count
   }));
 
-  // Get unique role options for filter
-  const roleOptions = Array.from(new Set(simulations.map(sim => sim.role || 'Unbekannt')));
+  const roleOptions = Array.from(new Set(simulations.map(sim => sim.target_role || sim.role || 'Unbekannt')));
 
   return (
     <Layout>
@@ -285,7 +267,6 @@ const SimulationsPage = () => {
           </div>
         ) : (
           <>
-            {/* Module Overview Table */}
             <Card className="bg-tactflux-gray border-white/5 shadow-card">
               <CardHeader className="border-b border-white/5">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -346,7 +327,6 @@ const SimulationsPage = () => {
               </CardContent>
             </Card>
             
-            {/* Score Chart */}
             <Card className="bg-tactflux-gray border-white/5 shadow-card">
               <CardHeader className="border-b border-white/5">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
@@ -421,7 +401,6 @@ const SimulationsPage = () => {
               </CardContent>
             </Card>
             
-            {/* AI Analysis Cards */}
             <h2 className="text-xl font-semibold mt-8 mb-4 flex items-center gap-2">
               <Bot className="h-5 w-5 text-tactflux-pink" />
               KI-Analysen pro Modul
