@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -20,7 +19,6 @@ import {
 import { generateRandomId } from '@/utils/idGenerator';
 import { UserRole } from '@/types/team';
 
-// Define form schema
 const formSchema = z.object({
   password: z.string()
     .min(8, { message: 'Das Passwort muss mindestens 8 Zeichen lang sein' })
@@ -34,7 +32,6 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-// Define the invitation data type with correct role typing
 interface InvitationDataType {
   companyName: string;
   email: string;
@@ -42,7 +39,6 @@ interface InvitationDataType {
   valid: boolean;
 }
 
-// Mock invitation data
 const mockInvitationData: InvitationDataType = {
   companyName: "Beispiel GmbH",
   email: "einladung@beispiel.de",
@@ -67,8 +63,6 @@ const InvitePage = () => {
   });
 
   useEffect(() => {
-    // In a real implementation, we would validate the token against the database
-    // For now, we'll use mock data
     setTimeout(() => {
       setInvitationData(mockInvitationData);
       setIsLoading(false);
@@ -78,13 +72,9 @@ const InvitePage = () => {
   const onSubmit = (data: FormValues) => {
     setIsLoading(true);
     
-    // In a real implementation, we would call an API to accept the invitation
-    // For now, we'll simulate a successful acceptance
     setTimeout(() => {
-      // Create a user for this invitation
       const userId = generateRandomId();
       
-      // Store the user in localStorage for demo purposes
       localStorage.setItem('tactflux-admin', JSON.stringify({
         id: userId,
         email: invitationData?.email,
@@ -105,14 +95,25 @@ const InvitePage = () => {
       setIsAccepted(true);
       setIsLoading(false);
       
-      // Redirect to dashboard after showing success message
       setTimeout(() => {
         navigate('/');
       }, 2000);
     }, 1500);
   };
 
-  // Show loading state
+  const getRoleLabel = (role: UserRole) => {
+    switch (role) {
+      case 'admin':
+        return 'Administrator';
+      case 'hr':
+        return 'HR Manager';
+      case 'viewer':
+        return 'Betrachter';
+      default:
+        return role;
+    }
+  };
+
   if (isLoading && !isAccepted) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -132,7 +133,6 @@ const InvitePage = () => {
     );
   }
 
-  // Show success message after accepting invitation
   if (isAccepted) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -151,7 +151,6 @@ const InvitePage = () => {
     );
   }
 
-  // Show error message if invitation is invalid
   if (!invitationData?.valid) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -175,7 +174,6 @@ const InvitePage = () => {
     );
   }
 
-  // Show the accept invitation form
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md mx-auto">
@@ -194,8 +192,7 @@ const InvitePage = () => {
               <div className="font-medium">{invitationData?.email}</div>
               <div className="mt-2 text-sm">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/20 text-blue-400">
-                  {invitationData?.role === 'admin' ? 'Administrator' : 
-                   invitationData?.role === 'hr' ? 'HR Manager' : 'Betrachter'}
+                  {getRoleLabel(invitationData?.role ?? 'viewer')}
                 </span>
               </div>
             </div>
