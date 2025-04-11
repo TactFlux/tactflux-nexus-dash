@@ -167,8 +167,8 @@ const CandidatesPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [candidates, setCandidates] = useState<CandidateData[]>(mockCandidates);
   const [filteredCandidates, setFilteredCandidates] = useState<CandidateData[]>(mockCandidates);
-  const [positionFilter, setPositionFilter] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [positionFilter, setPositionFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [dateFilter, setDateFilter] = useState<string>('all');
   const [sortField, setSortField] = useState<string>('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -188,12 +188,12 @@ const CandidatesPage = () => {
     }
     
     // Apply position filter
-    if (positionFilter) {
+    if (positionFilter && positionFilter !== 'all') {
       result = result.filter(candidate => candidate.position === positionFilter);
     }
     
     // Apply status filter
-    if (statusFilter) {
+    if (statusFilter && statusFilter !== 'all') {
       result = result.filter(candidate => candidate.status === statusFilter);
     }
     
@@ -351,7 +351,7 @@ const CandidatesPage = () => {
                 <SelectValue placeholder="Position filtern" />
               </SelectTrigger>
               <SelectContent className="bg-tactflux-gray border-white/10">
-                <SelectItem value="">Alle Positionen</SelectItem>
+                <SelectItem value="all">Alle Positionen</SelectItem>
                 {positions.map(position => (
                   <SelectItem key={position} value={position}>{position}</SelectItem>
                 ))}
@@ -363,7 +363,7 @@ const CandidatesPage = () => {
                 <SelectValue placeholder="Status filtern" />
               </SelectTrigger>
               <SelectContent className="bg-tactflux-gray border-white/10">
-                <SelectItem value="">Alle Status</SelectItem>
+                <SelectItem value="all">Alle Status</SelectItem>
                 {Object.entries(statusLabels).map(([value, label]) => (
                   <SelectItem key={value} value={value}>{label}</SelectItem>
                 ))}

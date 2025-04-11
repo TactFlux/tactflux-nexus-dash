@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import Layout from '@/components/layout/Layout';
@@ -57,8 +56,6 @@ const CompanySettingsPage = () => {
     
     setIsLoading(true);
     
-    // In a real application, this would send data to a server
-    // For this demo, we'll just update localStorage
     const updatedCompany = {
       ...user.company,
       name: companyName,
