@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,10 +7,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { ChevronDown, Check, AlertCircle, Loader2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { useUserTier } from "@/contexts/UserTierContext";
-import { cn } from "@/lib/utils";
 
 interface StatusChangeDropdownProps {
   currentStatus: string;
@@ -20,8 +20,6 @@ interface StatusChangeDropdownProps {
 const StatusChangeDropdown = ({ currentStatus, candidateId, onStatusChange }: StatusChangeDropdownProps) => {
   const { isProOrHigher } = useUserTier();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
 
   const statusOptions = [
     { value: 'pending', label: 'Ausstehend' },
@@ -40,74 +38,31 @@ const StatusChangeDropdown = ({ currentStatus, candidateId, onStatusChange }: St
       return;
     }
 
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      onStatusChange(candidateId, status);
-      setIsLoading(false);
-      
-      toast({
-        title: "Status aktualisiert",
-        description: `Der Status wurde erfolgreich auf "${statusOptions.find(opt => opt.value === status)?.label}" geändert.`,
-      });
-    }, 600);
+    onStatusChange(candidateId, status);
+    toast({
+      title: "Status aktualisiert",
+      description: `Der Status wurde erfolgreich auf "${statusOptions.find(opt => opt.value === status)?.label}" geändert.`,
+    });
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className={cn(
-            "h-8 data-[state=open]:bg-muted transition-all duration-300 group",
-            "hover:bg-muted/80 hover:scale-[1.02] active:scale-[0.98]",
-            isHovering && "ring-1 ring-muted-foreground/20"
-          )}
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <>
-              <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
-              <span>Wird aktualisiert...</span>
-            </>
-          ) : (
-            <>
-              Status ändern
-              <ChevronDown className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-y-0.5" />
-            </>
-          )}
+        <Button variant="ghost" size="sm" className="h-8 data-[state=open]:bg-muted">
+          Status ändern
+          <ChevronDown className="ml-2 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
-        className="w-[160px] bg-tactflux-gray border-white/10 animate-fade-in shadow-lg"
-      >
+      <DropdownMenuContent align="end" className="w-[160px] bg-tactflux-gray border-white/10">
         {statusOptions.map((option) => (
           <DropdownMenuItem
             key={option.value}
             onClick={() => handleStatusChange(option.value)}
-            className={cn(
-              "cursor-pointer transition-all duration-300 hover:bg-white/10 focus:bg-white/15 hover:scale-[1.02] active:scale-[0.98]",
-              currentStatus === option.value && "bg-white/5 text-tactflux-turquoise"
-            )}
+            className={`${currentStatus === option.value ? 'bg-white/5' : ''} cursor-pointer`}
           >
-            {currentStatus === option.value && (
-              <Check className="mr-2 h-4 w-4 text-tactflux-turquoise" />
-            )}
             {option.label}
           </DropdownMenuItem>
         ))}
-        
-        {!isProOrHigher && (
-          <div className="px-2 py-1.5 text-xs text-tactflux-pink flex items-center">
-            <AlertCircle className="h-3 w-3 mr-1" />
-            Benötigt Pro-Plan
-          </div>
-        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

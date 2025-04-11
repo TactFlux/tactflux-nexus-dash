@@ -22,13 +22,12 @@ const CTACard = ({ title, description, buttonText, icon: Icon, gradient, onClick
     <div className={cn(
       "rounded-xl p-6 shadow-card border border-white/10 relative overflow-hidden animate-fade-in h-full",
       "bg-gradient-to-br",
-      gradientClasses[gradient],
-      "transition-all duration-300 hover:shadow-glow hover:scale-[1.02] hover:border-white/20"
+      gradientClasses[gradient]
     )}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0),rgba(0,0,0,0.4))]" />
       
       <div className="relative z-10">
-        <div className="bg-black/20 rounded-full p-4 w-fit transition-transform hover:scale-110 hover:bg-black/30 duration-300">
+        <div className="bg-black/20 rounded-full p-4 w-fit">
           <Icon className="h-6 w-6 text-white" />
         </div>
         
@@ -40,10 +39,9 @@ const CTACard = ({ title, description, buttonText, icon: Icon, gradient, onClick
           className={cn(
             "px-6 py-2.5 rounded-lg font-medium text-sm",
             "bg-white text-black",
-            "hover:bg-opacity-90 transition-all duration-300",
+            "hover:bg-opacity-90 transition-all",
             "shadow-[0_0_15px_rgba(255,255,255,0.3)]",
-            "animate-pulse-glow",
-            "hover:shadow-[0_0_25px_rgba(255,255,255,0.5)] active:scale-[0.98]"
+            "animate-pulse-glow"
           )}
         >
           {buttonText}
