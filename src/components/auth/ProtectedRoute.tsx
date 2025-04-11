@@ -36,6 +36,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   const hasRequiredRole = user && requiredRoles.includes(user.role);
   
   if (!hasRequiredRole) {
+    console.log('Access denied: User role', user?.role, 'not in', requiredRoles);
     // Redirect to unauthorized page if user doesn't have required role
     return <Navigate to="/not-authorized" replace />;
   }
