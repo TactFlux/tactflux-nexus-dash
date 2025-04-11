@@ -1,10 +1,16 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Layout from '@/components/layout/Layout';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import ExportButtons from '@/components/export/ExportButtons';
+import EnterpriseFeature from '@/components/tier/EnterpriseFeature';
+import ProFeature from '@/components/tier/ProFeature';
+import APIEndpoints from '@/components/tier/APIEndpoints';
+import { exportToCSV, exportCandidatesToPDF } from '@/utils/exportUtils';
+import { useToast } from '@/components/ui/use-toast';
 
 const mockCandidates = [
   {
@@ -87,6 +93,32 @@ const statusLabels = {
 };
 
 const CandidatesPage = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const { toast } = useToast();
+  
+  // Filter candidates based on search term
+  const filteredCandidates = mockCandidates.filter(candidate => 
+    candidate.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    candidate.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    candidate.position.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleExportCSV = () => {
+    exportToCSV(filteredCandidates, 'tactflux-kandidaten');
+    toast({
+      title: "Export erfolgreich",
+      description: "Die Kandidatendaten wurden als CSV exportiert",
+    });
+  };
+
+  const handleExportPDF = () => {
+    exportCandidatesToPDF(filteredCandidates, 'tactflux-kandidaten');
+    toast({
+      title: "Export erfolgreich",
+      description: "Die Kandidatendaten wurden als PDF exportiert",
+    });
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -102,6 +134,8 @@ const CandidatesPage = () => {
               type="text" 
               placeholder="Search candidates..." 
               className="pl-10 bg-tactflux-gray/50 border-white/5"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
           
@@ -121,6 +155,12 @@ const CandidatesPage = () => {
               <option value="completed">Completed</option>
               <option value="rejected">Rejected</option>
             </select>
+
+            <ExportButtons 
+              onExportCSV={handleExportCSV}
+              onExportPDF={handleExportPDF}
+              label="Exportieren"
+            />
           </div>
         </div>
         
@@ -136,7 +176,7 @@ const CandidatesPage = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockCandidates.map((candidate) => (
+              {filteredCandidates.map((candidate) => (
                 <TableRow key={candidate.id} className="border-white/5 hover:bg-white/5">
                   <TableCell>
                     <div>
@@ -167,11 +207,43 @@ const CandidatesPage = () => {
         </div>
         
         <div className="flex justify-between items-center">
-          <p className="text-sm text-gray-400">Showing 7 of 1,245 candidates</p>
+          <p className="text-sm text-gray-400">Showing {filteredCandidates.length} of 1,245 candidates</p>
           <div className="flex gap-2">
             <button className="px-3 py-1 border border-white/10 rounded bg-tactflux-gray text-sm">Previous</button>
             <button className="px-3 py-1 border border-white/10 rounded bg-tactflux-gray text-sm">Next</button>
           </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <ProFeature>
+            <div className="bg-card p-6 rounded-xl">
+              <h3 className="text-lg font-bold mb-4">Erweiterte Visualisierungen</h3>
+              <div className="space-y-4">
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium mb-2">Trends der Kandidaten-Bewertungen</h4>
+                  <div className="h-40 bg-gradient-to-r from-tactflux-turquoise/20 to-tactflux-violet/20 rounded flex items-center justify-center">
+                    <p className="text-sm text-center text-muted-foreground">
+                      Visualisierungen der Kandidaten-Leistungstrends verfügbar<br />
+                      (Pro-Feature aktiviert)
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium mb-2">Leistungsverteilung nach Position</h4>
+                  <div className="h-40 bg-gradient-to-r from-tactflux-turquoise/20 to-tactflux-violet/20 rounded flex items-center justify-center">
+                    <p className="text-sm text-center text-muted-foreground">
+                      Detaillierte Leistungsverteilung nach Positionstyp<br />
+                      (Pro-Feature aktiviert)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ProFeature>
+
+          <EnterpriseFeature>
+            <APIEndpoints />
+          </EnterpriseFeature>
         </div>
       </div>
     </Layout>

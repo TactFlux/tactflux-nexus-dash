@@ -14,49 +14,52 @@ import CandidatesPage from "./pages/candidates";
 import SimulationsPage from "./pages/simulations";
 import SimulationDetailPage from "./pages/simulations/[id]";
 import StatisticsPage from "./pages/statistics";
+import { UserTierProvider } from "./contexts/UserTierContext";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <ThemeProvider defaultTheme="dark">
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/not-authorized" element={<NotAuthorized />} />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <Index />
-              </ProtectedRoute>
-            } />
-            <Route path="/candidates" element={
-              <ProtectedRoute>
-                <CandidatesPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/simulations" element={
-              <ProtectedRoute>
-                <SimulationsPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/simulations/:id" element={
-              <ProtectedRoute>
-                <SimulationDetailPage />
-              </ProtectedRoute>
-            } />
-            <Route path="/statistics" element={
-              <ProtectedRoute>
-                <StatisticsPage />
-              </ProtectedRoute>
-            } />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <UserTierProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/not-authorized" element={<NotAuthorized />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Index />
+                </ProtectedRoute>
+              } />
+              <Route path="/candidates" element={
+                <ProtectedRoute>
+                  <CandidatesPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/simulations" element={
+                <ProtectedRoute>
+                  <SimulationsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/simulations/:id" element={
+                <ProtectedRoute>
+                  <SimulationDetailPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/statistics" element={
+                <ProtectedRoute>
+                  <StatisticsPage />
+                </ProtectedRoute>
+              } />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </UserTierProvider>
     </QueryClientProvider>
   </ThemeProvider>
 );

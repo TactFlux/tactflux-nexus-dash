@@ -31,6 +31,12 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { ChartData, SimulationData } from '@/types/chart';
+import ExportButtons from '@/components/export/ExportButtons';
+import ProFeature from '@/components/tier/ProFeature';
+import EnterpriseFeature from '@/components/tier/EnterpriseFeature';
+import APIEndpoints from '@/components/tier/APIEndpoints';
+import { exportToCSV, exportToPDF } from '@/utils/exportUtils';
+import { useToast } from '@/components/ui/use-toast';
 
 // Dummy data for simulations
 const simulationsData: SimulationData[] = [
@@ -151,6 +157,7 @@ const SimulationsPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
+  const { toast } = useToast();
   
   // Filter simulations based on search term and active tab
   const filteredSimulations = simulationsData.filter(simulation => {
@@ -159,6 +166,22 @@ const SimulationsPage = () => {
     return matchesSearch && matchesTab;
   });
   
+  const handleExportCSV = () => {
+    exportToCSV(filteredSimulations, 'tactflux-simulationen');
+    toast({
+      title: "Export erfolgreich",
+      description: "Die Simulationsdaten wurden als CSV exportiert",
+    });
+  };
+
+  const handleExportPDF = () => {
+    exportToPDF(filteredSimulations, 'tactflux-simulationen');
+    toast({
+      title: "Export erfolgreich",
+      description: "Die Simulationsdaten wurden als PDF exportiert",
+    });
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -168,13 +191,21 @@ const SimulationsPage = () => {
             <p className="text-muted-foreground">Verwalte und analysiere deine Assessment-Simulationen</p>
           </div>
           
-          <Button 
-            onClick={() => navigate('/simulations/new')} 
-            className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Neue Simulation
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={() => navigate('/simulations/new')} 
+              className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet"
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Neue Simulation
+            </Button>
+
+            <ExportButtons 
+              onExportCSV={handleExportCSV}
+              onExportPDF={handleExportPDF}
+              label="Exportieren"
+            />
+          </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -313,6 +344,38 @@ const SimulationsPage = () => {
             </Table>
           </CardContent>
         </Card>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          <ProFeature>
+            <div className="bg-card p-6 rounded-xl">
+              <h3 className="text-lg font-bold mb-4">Erweiterte Analysen</h3>
+              <div className="space-y-4">
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium mb-2">Simulationsvergleich</h4>
+                  <div className="h-40 bg-gradient-to-r from-tactflux-turquoise/20 to-tactflux-violet/20 rounded flex items-center justify-center">
+                    <p className="text-sm text-center text-muted-foreground">
+                      Vergleich von Simulationseffektivität und Leistungstrends<br />
+                      (Pro-Feature aktiviert)
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium mb-2">Ergebniskorrelation</h4>
+                  <div className="h-40 bg-gradient-to-r from-tactflux-turquoise/20 to-tactflux-violet/20 rounded flex items-center justify-center">
+                    <p className="text-sm text-center text-muted-foreground">
+                      Korrelationsanalyse zwischen Simulationstypen und Ergebnissen<br />
+                      (Pro-Feature aktiviert)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ProFeature>
+
+          <EnterpriseFeature>
+            <APIEndpoints />
+          </EnterpriseFeature>
+        </div>
       </div>
     </Layout>
   );

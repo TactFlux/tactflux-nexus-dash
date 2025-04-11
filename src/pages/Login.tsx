@@ -5,10 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
 import { LockKeyhole, Mail } from 'lucide-react';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
+import { UserRole } from '@/contexts/UserTierContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState<UserRole>('basic');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -31,12 +40,12 @@ const Login = () => {
     // Check admin credentials (in a real app, this would be done server-side)
     if (email === 'liam.ts@icloud.com' && password === 'hesk-hueu-jrjd') {
       // Set authentication in local storage
-      localStorage.setItem('tactflux-admin', JSON.stringify({ isAdmin: true }));
+      localStorage.setItem('tactflux-admin', JSON.stringify({ isAdmin: true, role }));
       
       // Show success message
       toast({
         title: "Anmeldung erfolgreich",
-        description: "Willkommen im TactFlux Admin-Dashboard",
+        description: `Willkommen im TactFlux Admin-Dashboard (${role.toUpperCase()})`,
       });
 
       // Navigate to dashboard
@@ -104,6 +113,28 @@ const Login = () => {
                   className="pl-10 bg-background border-input focus:border-primary focus:ring-primary"
                 />
               </div>
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="role" className="text-sm font-medium block">
+                Benutzer-Stufe
+              </label>
+              <Select 
+                value={role} 
+                onValueChange={(value: UserRole) => setRole(value)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Wähle eine Benutzer-Stufe" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="basic">Basic</SelectItem>
+                  <SelectItem value="pro">Pro</SelectItem>
+                  <SelectItem value="enterprise">Enterprise</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">
+                Für Demo-Zwecke: Wähle die Benutzer-Stufe, mit der du dich anmelden möchtest.
+              </p>
             </div>
             
             <Button 

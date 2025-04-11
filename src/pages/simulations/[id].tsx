@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
@@ -52,8 +51,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChartData } from '@/types/chart';
+import ProFeature from '@/components/tier/ProFeature';
+import EnterpriseFeature from '@/components/tier/EnterpriseFeature';
+import { exportToCSV, exportToPDF } from '@/utils/exportUtils';
+import { useToast } from '@/components/ui/use-toast';
 
-// Dummy data for simulation details
 const simulationData = {
   id: 'sim-001',
   title: 'Frontend Developer Assessment',
@@ -110,6 +112,31 @@ const RESULT_COLORS = ['#10B981', '#EF4444'];
 
 const SimulationDetailPage = () => {
   const { id } = useParams<{ id: string }>();
+  const { toast } = useToast();
+  
+  const handleExportCSV = () => {
+    exportToCSV(simulationData.candidates, `tactflux-kandidaten-${id}`);
+    toast({
+      title: "Export erfolgreich",
+      description: "Die Kandidatendaten wurden als CSV exportiert",
+    });
+  };
+
+  const handleExportPDF = () => {
+    const pdfData = simulationData.candidates.map(candidate => ({
+      id: candidate.id,
+      name: candidate.name,
+      status: candidate.status,
+      score: candidate.score,
+      date: new Date().toISOString().split('T')[0]
+    }));
+    
+    exportToPDF(pdfData, `tactflux-simulation-${id}`);
+    toast({
+      title: "Export erfolgreich",
+      description: "Der Simulationsbericht wurde als PDF exportiert",
+    });
+  };
   
   return (
     <Layout>
@@ -133,14 +160,30 @@ const SimulationDetailPage = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            <Button variant="outline">
-              <Mail className="h-4 w-4 mr-2" />
-              Ergebnisse senden
-            </Button>
-            <Button className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet">
-              <Download className="h-4 w-4 mr-2" />
-              Report exportieren
-            </Button>
+            <EnterpriseFeature>
+              <Button variant="outline">
+                <Mail className="h-4 w-4 mr-2" />
+                Ergebnisse senden
+              </Button>
+            </EnterpriseFeature>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet">
+                  <Download className="h-4 w-4 mr-2" />
+                  Report exportieren
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={handleExportCSV}>
+                  CSV Export (Pro)
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleExportPDF}>
+                  PDF Export (Enterprise)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
@@ -284,10 +327,12 @@ const SimulationDetailPage = () => {
                 Kandidaten hinzufügen
               </Button>
               
-              <Button className="w-full justify-start" variant="outline">
-                <MessageCircle className="h-4 w-4 mr-2" />
-                Nachrichten senden
-              </Button>
+              <EnterpriseFeature lockMessage="Nachrichtenfunktion nur für Enterprise">
+                <Button className="w-full justify-start" variant="outline">
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Nachrichten senden
+                </Button>
+              </EnterpriseFeature>
               
               <Button className="w-full justify-start" variant="outline">
                 <Edit2 className="h-4 w-4 mr-2" />
@@ -348,6 +393,44 @@ const SimulationDetailPage = () => {
                 </Table>
               </CardContent>
             </Card>
+            
+            <ProFeature>
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Erweiterte Modulanalyse</CardTitle>
+                    <CardDescription>
+                      Detaillierte Analyse der Modulergebnisse
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 bg-gradient-to-r from-tactflux-turquoise/20 to-tactflux-violet/20 rounded flex items-center justify-center">
+                      <p className="text-sm text-center text-muted-foreground">
+                        Erweiterte Modulanalyse und Leistungsvergleich<br />
+                        (Pro-Feature aktiviert)
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Kompetenzanalyse</CardTitle>
+                    <CardDescription>
+                      Detaillierte Kompetenzauswertung
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 bg-gradient-to-r from-tactflux-turquoise/20 to-tactflux-violet/20 rounded flex items-center justify-center">
+                      <p className="text-sm text-center text-muted-foreground">
+                        Verteilung der Kompetenzen und Fähigkeiten<br />
+                        (Pro-Feature aktiviert)
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </ProFeature>
           </TabsContent>
           
           <TabsContent value="candidates">
@@ -458,6 +541,48 @@ const SimulationDetailPage = () => {
                 </p>
               </CardContent>
             </Card>
+
+            <EnterpriseFeature>
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>API-Zugriff</CardTitle>
+                  <CardDescription>
+                    API-Endpunkte für diese Simulation
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between bg-muted/50 p-3 rounded-md">
+                      <div>
+                        <p className="text-sm font-medium">Simulation Daten</p>
+                        <code className="text-xs text-muted-foreground">/api/v1/simulations/{id}</code>
+                      </div>
+                      <Button size="sm" variant="ghost">
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between bg-muted/50 p-3 rounded-md">
+                      <div>
+                        <p className="text-sm font-medium">Kandidaten Daten</p>
+                        <code className="text-xs text-muted-foreground">/api/v1/simulations/{id}/candidates</code>
+                      </div>
+                      <Button size="sm" variant="ghost">
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between bg-muted/50 p-3 rounded-md">
+                      <div>
+                        <p className="text-sm font-medium">Ergebnisexport</p>
+                        <code className="text-xs text-muted-foreground">/api/v1/simulations/{id}/export</code>
+                      </div>
+                      <Button size="sm" variant="ghost">
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </EnterpriseFeature>
           </TabsContent>
         </Tabs>
       </div>
