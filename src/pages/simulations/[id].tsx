@@ -1,191 +1,164 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { 
-  ArrowLeft, Users, Clock, Award, 
-  Brain, LineChart, BarChart3, 
-  Bot, ChevronRight, FileText
-} from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/components/ui/use-toast';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { 
+  AreaChart, 
+  Area, 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell
+} from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
+import { 
+  Calendar, 
+  Clock, 
+  Download, 
+  Edit2, 
+  Mail, 
+  MessageCircle, 
+  MoreHorizontal, 
+  Play, 
+  User, 
+  Users 
+} from 'lucide-react';
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from '@/components/ui/table';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Progress } from '@/components/ui/progress';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ChartData } from '@/types/chart';
 
-interface Simulation {
-  id: string;
-  name: string;
-  description: string;
-  completion_rate: number;
-  avg_time_seconds: number;
-  difficulty: 'Einfach' | 'Mittel' | 'Schwer';
-  candidates_count: number;
-  avg_score: number;
-  gpt_detection_count: number;
-  avg_gpt_probability: number;
-  suspicious_answers_rate: number;
-  target_role?: string;
-  role?: string;
-}
-
-const difficultyColors = {
-  'Einfach': 'text-green-400',
-  'Mittel': 'text-yellow-400',
-  'Schwer': 'text-red-400'
+// Dummy data for simulation details
+const simulationData = {
+  id: 'sim-001',
+  title: 'Frontend Developer Assessment',
+  description: 'Comprehensive assessment for frontend developer candidates, focusing on React, JavaScript, and CSS skills.',
+  date: '2025-04-10',
+  status: 'completed',
+  score: 87,
+  timeLimit: '45 minutes',
+  candidates: [
+    { id: 'c1', name: 'Anna Schmidt', avatar: '', score: 92, status: 'completed' },
+    { id: 'c2', name: 'Max Müller', avatar: '', score: 85, status: 'completed' },
+    { id: 'c3', name: 'Sarah Fischer', avatar: '', score: 78, status: 'completed' },
+    { id: 'c4', name: 'Thomas Weber', avatar: '', score: 90, status: 'completed' },
+    { id: 'c5', name: 'Julia Becker', avatar: '', score: 65, status: 'completed' },
+    { id: 'c6', name: 'David Schneider', avatar: '', score: 88, status: 'completed' },
+    { id: 'c7', name: 'Laura Meyer', avatar: '', score: 72, status: 'completed' },
+    { id: 'c8', name: 'Felix Wagner', avatar: '', score: 95, status: 'completed' },
+  ],
+  modules: [
+    { id: 'm1', name: 'JavaScript Fundamentals', weight: 25, avgScore: 82 },
+    { id: 'm2', name: 'React Components', weight: 30, avgScore: 85 },
+    { id: 'm3', name: 'CSS & Styling', weight: 20, avgScore: 90 },
+    { id: 'm4', name: 'State Management', weight: 15, avgScore: 78 },
+    { id: 'm5', name: 'Performance Optimization', weight: 10, avgScore: 72 },
+  ],
+  skillDistribution: [
+    { name: 'JavaScript', score: 85 },
+    { name: 'React', score: 88 },
+    { name: 'CSS', score: 92 },
+    { name: 'HTML', score: 95 },
+    { name: 'Git', score: 80 },
+    { name: 'Testing', score: 75 },
+  ],
+  timeDistribution: [
+    { time: '0-10', value: 22 },
+    { time: '10-20', value: 28 },
+    { time: '20-30', value: 35 },
+    { time: '30-40', value: 12 },
+    { time: '40+', value: 3 },
+  ],
+  resultDistribution: [
+    { name: 'Passed', value: 18 },
+    { name: 'Failed', value: 5 },
+  ],
+  feedbacks: [
+    { id: 'f1', candidate: 'Anna Schmidt', content: 'The test was challenging but fair. I especially liked the React component exercises.', date: '2025-04-11' },
+    { id: 'f2', candidate: 'Max Müller', content: 'Good assessment overall. Some questions were a bit ambiguous though.', date: '2025-04-12' },
+    { id: 'f3', candidate: 'Thomas Weber', content: 'Very comprehensive test. It covered all aspects of frontend development.', date: '2025-04-10' },
+  ]
 };
 
-const formatTime = (seconds: number) => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes}m ${remainingSeconds.toString().padStart(2, '0')}s`;
-};
+const COLORS = ['#10B981', '#EF4444', '#F59E0B', '#3B82F6', '#8B5CF6'];
+const RESULT_COLORS = ['#10B981', '#EF4444'];
 
 const SimulationDetailPage = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const [simulation, setSimulation] = useState<Simulation | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadSimulation = async () => {
-      try {
-        setLoading(true);
-        
-        // For now, we'll use dummy data
-        // In a real app, this would fetch from your Supabase DB
-        const dummyData: Simulation[] = [
-          {
-            id: '1',
-            name: 'Kreatives Denken',
-            description: 'Test für kreative Problemlösung',
-            completion_rate: 78,
-            avg_time_seconds: 1320, // 22 minutes
-            difficulty: 'Mittel',
-            candidates_count: 145,
-            avg_score: 72,
-            gpt_detection_count: 12,
-            avg_gpt_probability: 28,
-            suspicious_answers_rate: 15,
-            target_role: 'Designer'
-          },
-          {
-            id: '2',
-            name: 'Logisches Denken',
-            description: 'Test für analytische Fähigkeiten',
-            completion_rate: 92,
-            avg_time_seconds: 1500, // 25 minutes
-            difficulty: 'Schwer',
-            candidates_count: 203,
-            avg_score: 68,
-            gpt_detection_count: 45,
-            avg_gpt_probability: 76,
-            suspicious_answers_rate: 62,
-            target_role: 'Entwickler'
-          },
-          {
-            id: '3',
-            name: 'Kommunikation',
-            description: 'Test für kommunikative Fähigkeiten',
-            completion_rate: 95,
-            avg_time_seconds: 900, // 15 minutes
-            difficulty: 'Einfach',
-            candidates_count: 312,
-            avg_score: 88,
-            gpt_detection_count: 5,
-            avg_gpt_probability: 12,
-            suspicious_answers_rate: 8,
-            target_role: 'Manager'
-          }
-        ];
-        
-        const sim = dummyData.find(s => s.id === id);
-        
-        if (sim) {
-          setSimulation(sim);
-        } else {
-          setError('Simulation nicht gefunden');
-          toast({
-            title: "Nicht gefunden",
-            description: "Die angeforderte Simulation existiert nicht.",
-            variant: "destructive"
-          });
-        }
-      } catch (err) {
-        console.error('Error loading simulation:', err);
-        setError('Fehler beim Laden der Simulation');
-        toast({
-          title: "Fehler",
-          description: "Die Simulationsdaten konnten nicht geladen werden.",
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadSimulation();
-  }, [id, toast]);
-
-  if (loading) {
-    return (
-      <Layout>
-        <div className="space-y-6">
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <div className="space-y-2">
-              <Skeleton className="h-4 w-[250px]" />
-              <Skeleton className="h-4 w-[150px]" />
-            </div>
-          </div>
-          
-          <Skeleton className="h-[300px] w-full rounded-xl" />
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Skeleton className="h-[200px] w-full rounded-xl" />
-            <Skeleton className="h-[200px] w-full rounded-xl" />
-          </div>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (error || !simulation) {
-    return (
-      <Layout>
-        <div className="flex flex-col items-center justify-center p-12 text-center">
-          <FileText className="h-16 w-16 text-muted-foreground mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Simulation nicht gefunden</h2>
-          <p className="text-muted-foreground mb-6">{error || "Die angeforderte Simulation konnte nicht geladen werden."}</p>
-          <Button 
-            onClick={() => navigate('/simulations')}
-            className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zur Übersicht
-          </Button>
-        </div>
-      </Layout>
-    );
-  }
-
+  
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={() => navigate('/simulations')}
-          >
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Alle Simulationen
-          </Button>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          <span className="text-muted-foreground">{simulation.name}</span>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <h1 className="text-2xl font-bold">{simulationData.title}</h1>
+              <Badge 
+                variant="outline" 
+                className="bg-green-500/10 text-green-500 border-green-500/20"
+              >
+                <Calendar className="w-3 h-3 mr-1" />
+                Abgeschlossen
+              </Badge>
+            </div>
+            <p className="text-muted-foreground">
+              Erstellt am {new Date(simulationData.date).toLocaleDateString('de-DE')} • 
+              {simulationData.candidates.length} Kandidaten
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button variant="outline">
+              <Mail className="h-4 w-4 mr-2" />
+              Ergebnisse senden
+            </Button>
+            <Button className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet">
+              <Download className="h-4 w-4 mr-2" />
+              Report exportieren
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Edit2 className="h-4 w-4 mr-2" />
+                  Bearbeiten
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Play className="h-4 w-4 mr-2" />
+                  Neu starten
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -193,68 +166,109 @@ const SimulationDetailPage = () => {
             <CardHeader className="border-b border-white/5">
               <div className="flex justify-between items-start">
                 <div>
-                  <h1 className="text-2xl font-bold">{simulation.name}</h1>
-                  <p className="text-gray-400">{simulation.description}</p>
+                  <CardTitle>Simulation Übersicht</CardTitle>
+                  <CardDescription>Details und Leistungskennzahlen</CardDescription>
                 </div>
-                <Badge className={`${difficultyColors[simulation.difficulty as keyof typeof difficultyColors]} bg-transparent`}>
-                  {simulation.difficulty}
-                </Badge>
+                <div className="flex items-center gap-1 bg-foreground/5 px-2 py-1 rounded-md text-sm font-mono">
+                  ID: {simulationData.id}
+                </div>
               </div>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                <div className="text-center p-4 bg-tactflux-gray/30 rounded-lg">
-                  <Users className="h-6 w-6 mx-auto text-tactflux-turquoise mb-2" />
-                  <div className="text-2xl font-bold">{simulation.candidates_count}</div>
-                  <div className="text-xs text-gray-400">Teilnehmer</div>
+            <CardContent className="p-6 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-card/50 p-4 rounded-lg">
+                  <div className="text-muted-foreground text-sm mb-1 flex items-center">
+                    <Users className="h-3.5 w-3.5 mr-1.5" />
+                    Kandidaten
+                  </div>
+                  <div className="text-2xl font-bold">{simulationData.candidates.length}</div>
                 </div>
                 
-                <div className="text-center p-4 bg-tactflux-gray/30 rounded-lg">
-                  <Award className="h-6 w-6 mx-auto text-tactflux-violet mb-2" />
-                  <div className="text-2xl font-bold">{simulation.avg_score}%</div>
-                  <div className="text-xs text-gray-400">Ø Score</div>
+                <div className="bg-card/50 p-4 rounded-lg">
+                  <div className="text-muted-foreground text-sm mb-1 flex items-center">
+                    <Clock className="h-3.5 w-3.5 mr-1.5" />
+                    Zeitlimit
+                  </div>
+                  <div className="text-2xl font-bold">{simulationData.timeLimit}</div>
                 </div>
                 
-                <div className="text-center p-4 bg-tactflux-gray/30 rounded-lg">
-                  <Clock className="h-6 w-6 mx-auto text-tactflux-turquoise mb-2" />
-                  <div className="text-2xl font-bold">{formatTime(simulation.avg_time_seconds)}</div>
-                  <div className="text-xs text-gray-400">Ø Zeit</div>
-                </div>
-                
-                <div className="text-center p-4 bg-tactflux-gray/30 rounded-lg">
-                  <Bot className="h-6 w-6 mx-auto text-tactflux-pink mb-2" />
-                  <div className="text-2xl font-bold">{simulation.avg_gpt_probability}%</div>
-                  <div className="text-xs text-gray-400">KI-Verdacht</div>
+                <div className="bg-card/50 p-4 rounded-lg">
+                  <div className="text-muted-foreground text-sm mb-1 flex items-center">
+                    <div className="h-3.5 w-3.5 mr-1.5 flex items-center justify-center text-xs">%</div>
+                    Durchschn. Score
+                  </div>
+                  <div className="text-2xl font-bold">{simulationData.score}%</div>
                 </div>
               </div>
               
-              <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-medium mb-3">Leistungsverteilung</h3>
+                <ResponsiveContainer width="100%" height={200}>
+                  <BarChart data={simulationData.skillDistribution}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis dataKey="name" tick={{ fill: '#888' }} />
+                    <YAxis tick={{ fill: '#888' }} />
+                    <Tooltip />
+                    <Bar dataKey="score" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium">Abschlussrate</span>
-                    <span className="text-sm font-medium">{simulation.completion_rate}%</span>
-                  </div>
-                  <Progress 
-                    value={simulation.completion_rate} 
-                    className="h-2" 
-                    indicatorClassName="bg-tactflux-turquoise"
-                  />
+                  <h3 className="text-sm font-medium mb-3">Zeit pro Module (Minuten)</h3>
+                  <ResponsiveContainer width="100%" height={200}>
+                    <AreaChart data={simulationData.timeDistribution}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                      <XAxis dataKey="time" tick={{ fill: '#888' }} />
+                      <YAxis tick={{ fill: '#888' }} />
+                      <Tooltip />
+                      <Area 
+                        type="monotone" 
+                        dataKey="value" 
+                        stroke="#8B5CF6" 
+                        fill="url(#colorGradient)" 
+                        fillOpacity={0.6} 
+                      />
+                      <defs>
+                        <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#8B5CF6" stopOpacity={0.8}/>
+                          <stop offset="95%" stopColor="#8B5CF6" stopOpacity={0.1}/>
+                        </linearGradient>
+                      </defs>
+                    </AreaChart>
+                  </ResponsiveContainer>
                 </div>
                 
                 <div>
-                  <div className="flex justify-between mb-2">
-                    <span className="text-sm font-medium">KI-Erkennungsrate</span>
-                    <span className="text-sm font-medium">{simulation.avg_gpt_probability}%</span>
+                  <h3 className="text-sm font-medium mb-3">Abschlussquote</h3>
+                  <div className="flex items-center justify-center h-[200px]">
+                    <ChartContainer
+                      config={{
+                        passed: { label: "Bestanden", color: "#10B981" },
+                        failed: { label: "Nicht bestanden", color: "#EF4444" }
+                      }}
+                    >
+                      <ResponsiveContainer width="100%" height={200}>
+                        <PieChart>
+                          <Pie
+                            data={simulationData.resultDistribution as ChartData[]}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={60}
+                            outerRadius={80}
+                            paddingAngle={2}
+                            dataKey="value"
+                          >
+                            {simulationData.resultDistribution.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={RESULT_COLORS[index % RESULT_COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </ChartContainer>
                   </div>
-                  <Progress 
-                    value={simulation.avg_gpt_probability} 
-                    className="h-2" 
-                    indicatorClassName={`${
-                      simulation.avg_gpt_probability > 80 ? 'bg-red-500' : 
-                      simulation.avg_gpt_probability > 50 ? 'bg-yellow-500' : 
-                      'bg-green-500'
-                    }`}
-                  />
                 </div>
               </div>
             </CardContent>
@@ -265,20 +279,24 @@ const SimulationDetailPage = () => {
               <h2 className="text-xl font-semibold">Aktionen</h2>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
-              <Button className="w-full bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet">
-                Kandidaten einladen
+              <Button className="w-full justify-start" variant="outline">
+                <User className="h-4 w-4 mr-2" />
+                Kandidaten hinzufügen
               </Button>
               
-              <Button variant="outline" className="w-full">
+              <Button className="w-full justify-start" variant="outline">
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Nachrichten senden
+              </Button>
+              
+              <Button className="w-full justify-start" variant="outline">
+                <Edit2 className="h-4 w-4 mr-2" />
                 Simulation bearbeiten
               </Button>
               
-              <Button variant="outline" className="w-full">
-                Ergebnisse exportieren
-              </Button>
-              
-              <Button variant="outline" className="w-full text-red-400 hover:text-red-300 hover:bg-red-500/10">
-                Simulation löschen
+              <Button className="w-full justify-start" variant="outline">
+                <Play className="h-4 w-4 mr-2" />
+                Simulation neu starten
               </Button>
             </CardContent>
           </Card>
@@ -287,50 +305,156 @@ const SimulationDetailPage = () => {
         <Tabs defaultValue="results" className="w-full">
           <TabsList className="mb-6">
             <TabsTrigger value="results">Ergebnisse</TabsTrigger>
-            <TabsTrigger value="questions">Fragen</TabsTrigger>
+            <TabsTrigger value="candidates">Kandidaten</TabsTrigger>
+            <TabsTrigger value="feedback">Feedback</TabsTrigger>
             <TabsTrigger value="settings">Einstellungen</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="results" className="space-y-6">
-            <Card className="bg-tactflux-gray border-white/5 shadow-card">
-              <CardHeader className="border-b border-white/5">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-tactflux-turquoise" />
-                  Ergebnisübersicht
-                </h2>
+          <TabsContent value="results">
+            <Card>
+              <CardHeader>
+                <CardTitle>Module Ergebnisse</CardTitle>
+                <CardDescription>
+                  Performance der Kandidaten in den verschiedenen Modulen
+                </CardDescription>
               </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-center text-muted-foreground py-8">
-                  Hier würden die detaillierten Ergebnisse und Statistiken angezeigt werden.
-                </p>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Modul</TableHead>
+                      <TableHead>Gewichtung</TableHead>
+                      <TableHead>Durchschn. Score</TableHead>
+                      <TableHead>Performance</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {simulationData.modules.map((module) => (
+                      <TableRow key={module.id}>
+                        <TableCell className="font-medium">{module.name}</TableCell>
+                        <TableCell>{module.weight}%</TableCell>
+                        <TableCell>{module.avgScore}%</TableCell>
+                        <TableCell className="w-[300px]">
+                          <div className="flex items-center gap-2">
+                            <Progress value={module.avgScore} className="h-2" />
+                            <span className="text-xs text-muted-foreground w-10">
+                              {module.avgScore}%
+                            </span>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           </TabsContent>
           
-          <TabsContent value="questions" className="space-y-6">
-            <Card className="bg-tactflux-gray border-white/5 shadow-card">
-              <CardHeader className="border-b border-white/5">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-tactflux-violet" />
-                  Fragenkatalog
-                </h2>
+          <TabsContent value="candidates">
+            <Card>
+              <CardHeader>
+                <CardTitle>Kandidaten Liste</CardTitle>
+                <CardDescription>
+                  Alle Teilnehmer dieser Simulation
+                </CardDescription>
               </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-center text-muted-foreground py-8">
-                  Hier würden die Fragen und Aufgaben der Simulation angezeigt werden.
-                </p>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Score</TableHead>
+                      <TableHead>Bewertung</TableHead>
+                      <TableHead></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {simulationData.candidates.map((candidate) => (
+                      <TableRow key={candidate.id}>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src={candidate.avatar} />
+                              <AvatarFallback className="bg-tactflux-turquoise text-white">
+                                {candidate.name.split(' ').map(n => n[0]).join('')}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span>{candidate.name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="bg-green-500/10 text-green-500 border-green-500/20">
+                            Abgeschlossen
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-mono">{candidate.score}%</TableCell>
+                        <TableCell className="w-[300px]">
+                          <div className="flex items-center gap-2">
+                            <Progress 
+                              value={candidate.score} 
+                              className={`h-2 ${
+                                candidate.score >= 80 ? 'bg-green-200' : 
+                                candidate.score >= 60 ? 'bg-yellow-200' : 'bg-red-200'
+                              }`} 
+                            />
+                            <span className="text-xs text-muted-foreground w-10">
+                              {candidate.score}%
+                            </span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           </TabsContent>
           
-          <TabsContent value="settings" className="space-y-6">
-            <Card className="bg-tactflux-gray border-white/5 shadow-card">
-              <CardHeader className="border-b border-white/5">
-                <h2 className="text-xl font-semibold">Simulationseinstellungen</h2>
+          <TabsContent value="feedback">
+            <Card>
+              <CardHeader>
+                <CardTitle>Kandidaten Feedback</CardTitle>
+                <CardDescription>
+                  Feedback der Teilnehmer zur Simulation
+                </CardDescription>
               </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-center text-muted-foreground py-8">
-                  Hier würden die Einstellungen und Konfigurationsoptionen angezeigt werden.
+              <CardContent>
+                <ScrollArea className="h-[400px]">
+                  <div className="space-y-4">
+                    {simulationData.feedbacks.map((feedback) => (
+                      <div key={feedback.id} className="border border-border/50 rounded-lg p-4">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="font-medium">{feedback.candidate}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {new Date(feedback.date).toLocaleDateString('de-DE')}
+                          </div>
+                        </div>
+                        <p className="text-sm">{feedback.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="settings">
+            <Card>
+              <CardHeader>
+                <CardTitle>Simulation Einstellungen</CardTitle>
+                <CardDescription>
+                  Konfiguriere die Parameter der Simulation
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Einstellungen für diese Simulation sind in der aktuellen Version nicht verfügbar.
                 </p>
               </CardContent>
             </Card>
