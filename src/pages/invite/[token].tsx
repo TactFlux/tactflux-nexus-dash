@@ -34,11 +34,19 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
+// Define the invitation data type with correct role typing
+interface InvitationDataType {
+  companyName: string;
+  email: string;
+  role: UserRole;
+  valid: boolean;
+}
+
 // Mock invitation data
-const mockInvitationData = {
+const mockInvitationData: InvitationDataType = {
   companyName: "Beispiel GmbH",
   email: "einladung@beispiel.de",
-  role: "hr" as UserRole,
+  role: "hr",
   valid: true,
 };
 
@@ -47,7 +55,7 @@ const InvitePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
-  const [invitationData, setInvitationData] = useState<typeof mockInvitationData | null>(null);
+  const [invitationData, setInvitationData] = useState<InvitationDataType | null>(null);
   const [isAccepted, setIsAccepted] = useState(false);
 
   const form = useForm<FormValues>({
