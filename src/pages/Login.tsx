@@ -40,7 +40,22 @@ const Login = () => {
     // Check admin credentials (in a real app, this would be done server-side)
     if (email === 'liam.ts@icloud.com' && password === 'hesk-hueu-jrjd') {
       // Set authentication in local storage
-      localStorage.setItem('tactflux-admin', JSON.stringify({ isAdmin: true, role }));
+      localStorage.setItem('tactflux-admin', JSON.stringify({ 
+        isAdmin: true, 
+        role,
+        id: 'admin-user',
+        email: 'liam.ts@icloud.com',
+        companyId: 'default-company',
+        company: {
+          id: 'default-company',
+          name: 'TactFlux Admin',
+          plan: role === 'basic' ? 'free' : role === 'pro' ? 'pro' : 'enterprise',
+          logoUrl: '/lovable-uploads/79b93f56-97fe-416b-9625-4bf78b87f33f.png',
+          primaryColor: '#6E59A5',
+          accentColor: '#1EAEDB',
+          welcomeMessage: 'Willkommen im TactFlux Admin-Dashboard'
+        }
+      }));
       
       // Show success message
       toast({
@@ -144,6 +159,15 @@ const Login = () => {
             >
               {isLoading ? "Authentifiziere..." : "Anmelden"}
             </Button>
+
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground">
+                Noch kein Account?{' '}
+                <a href="/signup" className="text-tactflux-turquoise hover:underline">
+                  Jetzt registrieren
+                </a>
+              </p>
+            </div>
           </form>
         </div>
         

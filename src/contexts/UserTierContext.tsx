@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 // Definiere die möglichen Benutzerrollen
 export type UserRole = 'basic' | 'pro' | 'enterprise';
@@ -28,36 +29,36 @@ interface UserTierProviderProps {
   children: ReactNode;
 }
 
+// Dieses Mapping wird verwendet, um vom "plan" im Unternehmen auf die UserRole zu mappen
+const planToRoleMapping = {
+  'free': 'basic' as UserRole,
+  'pro': 'pro' as UserRole,
+  'enterprise': 'enterprise' as UserRole
+};
+
 // Provider-Komponente
 export const UserTierProvider: React.FC<UserTierProviderProps> = ({ children }) => {
   const [userRole, setUserRole] = useState<UserRole>('basic');
   const [isLoading, setIsLoading] = useState(true);
+  const { user, isLoading: authLoading } = useAuth();
 
   useEffect(() => {
-    // Lade die Benutzerrolle aus dem sessionStorage oder localStorage
-    const loadUserRole = () => {
-      try {
-        const adminData = localStorage.getItem('tactflux-admin');
-        
-        if (adminData) {
-          const parsed = JSON.parse(adminData);
-          // Wir lesen die Rolle aus dem gespeicherten Admin-Objekt
-          // Falls keine Rolle vorhanden ist, verwenden wir 'basic' als Standard
-          const role = parsed.role || 'basic';
-          setUserRole(role as UserRole);
-        } else {
-          setUserRole('basic');
-        }
-      } catch (error) {
-        console.error('Fehler beim Laden der Benutzerrolle:', error);
+    // Wenn der Auth-Loading-Status beendet ist und Benutzerdaten vorhanden sind
+    if (!authLoading) {
+      if (user?.company?.plan) {
+        // Konvertiere den Unternehmensplan in eine UserRole
+        const mappedRole = planToRoleMapping[user.company.plan as 'free' | 'pro' | 'enterprise'] || 'basic';
+        setUserRole(mappedRole);
+      } else if (user?.role) {
+        // Fallback zur Benutzerrolle, wenn kein Unternehmensplan vorhanden ist
+        setUserRole(user.role as UserRole);
+      } else {
+        // Standardmäßig auf basic setzen
         setUserRole('basic');
-      } finally {
-        setIsLoading(false);
       }
-    };
-
-    loadUserRole();
-  }, []);
+      setIsLoading(false);
+    }
+  }, [user, authLoading]);
 
   // Berechnete Eigenschaften
   const isProOrHigher = userRole === 'pro' || userRole === 'enterprise';

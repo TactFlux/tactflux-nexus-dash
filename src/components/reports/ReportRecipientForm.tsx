@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import PlanFeature from '@/components/tier/PlanFeature';
 
 const formSchema = z.object({
   email: z.string().email('Gültige E-Mail-Adresse erforderlich'),
@@ -52,6 +53,7 @@ const ReportRecipientForm = ({ onSuccess }: { onSuccess: () => void }) => {
         company_name: data.company_name || null,
         active: true,
         user_id: user.id,
+        company_id: user.companyId
       });
 
       if (error) throw error;
@@ -74,41 +76,43 @@ const ReportRecipientForm = ({ onSuccess }: { onSuccess: () => void }) => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>E-Mail</FormLabel>
-              <FormControl>
-                <Input placeholder="beispiel@firma.de" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <PlanFeature requiredPlan="enterprise">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>E-Mail</FormLabel>
+                <FormControl>
+                  <Input placeholder="beispiel@firma.de" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <FormField
-          control={form.control}
-          name="company_name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Firmenname (optional)</FormLabel>
-              <FormControl>
-                <Input placeholder="Firma GmbH" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="company_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Firmenname (optional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Firma GmbH" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button type="submit" className="mt-4">
-          Hinzufügen
-        </Button>
-      </form>
-    </Form>
+          <Button type="submit" className="mt-4">
+            Hinzufügen
+          </Button>
+        </form>
+      </Form>
+    </PlanFeature>
   );
 };
 

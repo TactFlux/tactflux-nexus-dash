@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import NotAuthorized from "./pages/NotAuthorized";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import CandidatesPage from "./pages/candidates";
 import CandidateDetailPage from "./pages/candidates/[id]";
@@ -21,6 +22,7 @@ import { UserTierProvider } from "./contexts/UserTierContext";
 import ApiKeysPage from "./pages/admin/api-keys";
 import ApiDocsPage from "./pages/admin/api-docs";
 import ReportSettingsPage from "./pages/admin/report-settings";
+import CompanySettingsPage from "./pages/admin/company-settings";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +36,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
               <Route path="/not-authorized" element={<NotAuthorized />} />
               <Route path="/" element={
                 <ProtectedRoute>
@@ -88,6 +91,11 @@ const App = () => (
               <Route path="/admin/report-settings" element={
                 <ProtectedRoute>
                   <ReportSettingsPage />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/company-settings" element={
+                <ProtectedRoute>
+                  <CompanySettingsPage />
                 </ProtectedRoute>
               } />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

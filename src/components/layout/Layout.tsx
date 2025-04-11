@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import AppSidebar from './AppSidebar';
 import Header from './Header';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/hooks/useAuth';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,9 +14,29 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const isMobile = useIsMobile();
+  const { user } = useAuth();
+  const [cssVars, setCssVars] = useState<Record<string, string>>({});
+  
+  useEffect(() => {
+    if (user?.company) {
+      const { primaryColor, accentColor } = user.company;
+      
+      // Set CSS variables for dynamic theming
+      document.documentElement.style.setProperty('--company-primary', primaryColor || '#6E59A5');
+      document.documentElement.style.setProperty('--company-accent', accentColor || '#1EAEDB');
+      
+      setCssVars({
+        '--company-primary': primaryColor || '#6E59A5',
+        '--company-accent': accentColor || '#1EAEDB',
+      });
+    }
+  }, [user?.company]);
   
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div 
+      className="min-h-screen bg-background text-foreground"
+      style={cssVars as React.CSSProperties}
+    >
       <div className="flex">
         {/* Desktop sidebar */}
         <div className="hidden md:block">
@@ -39,6 +60,11 @@ const Layout = ({ children }: LayoutProps) => {
         <main className="flex-1 min-h-screen w-full">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
             <Header />
+            {user?.company?.welcomeMessage && (
+              <div className="mb-6 p-4 rounded-lg bg-primary/10 border border-primary/20">
+                <p className="text-sm text-primary">{user.company.welcomeMessage}</p>
+              </div>
+            )}
             {children}
           </div>
         </main>

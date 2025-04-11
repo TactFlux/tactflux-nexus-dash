@@ -1,9 +1,23 @@
 
 import { useState, useEffect } from 'react';
 
-interface User {
+export interface Company {
+  id: string;
+  name: string;
+  plan: 'free' | 'pro' | 'enterprise';
+  logoUrl?: string;
+  primaryColor?: string;
+  accentColor?: string;
+  welcomeMessage?: string;
+}
+
+export interface User {
   id: string;
   isAdmin: boolean;
+  email?: string;
+  role: 'admin' | 'user';
+  companyId: string;
+  company?: Company;
 }
 
 interface AuthState {
@@ -32,7 +46,11 @@ export const useAuth = (): AuthState => {
             isLoading: false,
             user: {
               id: parsed.id || 'default-user-id',
-              isAdmin: !!parsed.isAdmin
+              isAdmin: !!parsed.isAdmin,
+              email: parsed.email || '',
+              role: parsed.role || 'admin',
+              companyId: parsed.companyId || '',
+              company: parsed.company || undefined
             }
           });
         } catch (error) {
