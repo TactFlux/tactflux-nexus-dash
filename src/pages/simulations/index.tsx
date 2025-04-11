@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { 
   FileText, Users, Clock, Award, 
-  Brain, BarChart, LineChart as LineChartIcon, 
-  Filter, Robot, AlertTriangle
+  Brain, BarChart3 as BarChartIcon, LineChart as LineChartIcon, 
+  Filter, Bot, AlertTriangle
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -36,6 +36,7 @@ interface Simulation {
   gpt_detection_count: number;
   avg_gpt_probability: number;
   suspicious_answers_rate: number;
+  role?: string; // Add optional role field
 }
 
 interface ChartData {
@@ -107,30 +108,67 @@ const SimulationsPage = () => {
           dateFilter.setDate(dateFilter.getDate() - parseInt(timeFilter));
         }
         
-        let query = supabase
-          .from('simulations')
-          .select('*');
+        // For now, we'll use dummy data as the table doesn't exist yet
+        // In a real app, this would query the actual database
+        const dummyData: Simulation[] = [
+          {
+            id: '1',
+            name: 'Kreatives Denken',
+            description: 'Test für kreative Problemlösung',
+            completion_rate: 78,
+            avg_time_seconds: 1320, // 22 minutes
+            difficulty: 'Mittel',
+            candidates_count: 145,
+            avg_score: 72,
+            gpt_detection_count: 12,
+            avg_gpt_probability: 28,
+            suspicious_answers_rate: 15,
+            role: 'Designer'
+          },
+          {
+            id: '2',
+            name: 'Logisches Denken',
+            description: 'Test für analytische Fähigkeiten',
+            completion_rate: 92,
+            avg_time_seconds: 1500, // 25 minutes
+            difficulty: 'Schwer',
+            candidates_count: 203,
+            avg_score: 68,
+            gpt_detection_count: 45,
+            avg_gpt_probability: 76,
+            suspicious_answers_rate: 62,
+            role: 'Entwickler'
+          },
+          {
+            id: '3',
+            name: 'Kommunikation',
+            description: 'Test für kommunikative Fähigkeiten',
+            completion_rate: 95,
+            avg_time_seconds: 900, // 15 minutes
+            difficulty: 'Einfach',
+            candidates_count: 312,
+            avg_score: 88,
+            gpt_detection_count: 5,
+            avg_gpt_probability: 12,
+            suspicious_answers_rate: 8,
+            role: 'Manager'
+          }
+        ];
         
-        // Apply time filter if not 'all'
-        if (timeFilter !== 'all') {
-          query = query.gte('created_at', dateFilter.toISOString());
-        }
+        // Apply filters to dummy data
+        let filteredData = [...dummyData];
         
         // Apply module filter if not 'all'
         if (moduleFilter !== 'all') {
-          query = query.eq('id', moduleFilter);
+          filteredData = filteredData.filter(sim => sim.id === moduleFilter);
         }
         
         // Apply role filter if not 'all'
         if (roleFilter !== 'all') {
-          query = query.eq('target_role', roleFilter);
+          filteredData = filteredData.filter(sim => sim.role === roleFilter);
         }
         
-        const { data, error } = await query;
-        
-        if (error) throw error;
-        
-        setSimulations(data || []);
+        setSimulations(filteredData);
       } catch (err) {
         console.error('Error fetching simulations:', err);
         setError('Fehler beim Laden der Simulationen');
@@ -158,7 +196,7 @@ const SimulationsPage = () => {
   }));
 
   // Get unique role options for filter
-  const roleOptions = Array.from(new Set(simulations.map(sim => sim.target_role || 'Unbekannt')));
+  const roleOptions = Array.from(new Set(simulations.map(sim => sim.role || 'Unbekannt')));
 
   return (
     <Layout>
@@ -251,7 +289,7 @@ const SimulationsPage = () => {
             <Card className="bg-tactflux-gray border-white/5 shadow-card">
               <CardHeader className="border-b border-white/5">
                 <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <BarChart className="h-5 w-5 text-tactflux-turquoise" />
+                  <BarChartIcon className="h-5 w-5 text-tactflux-turquoise" />
                   Modulübersicht
                 </h2>
               </CardHeader>
@@ -285,7 +323,7 @@ const SimulationsPage = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div className="flex items-center justify-end gap-2">
-                                  <Robot className="h-4 w-4 text-tactflux-pink" />
+                                  <Bot className="h-4 w-4 text-tactflux-pink" />
                                   <span className={`${
                                     sim.avg_gpt_probability > 80 ? 'text-red-400' : 
                                     sim.avg_gpt_probability > 50 ? 'text-yellow-400' : 'text-green-400'
@@ -325,57 +363,59 @@ const SimulationsPage = () => {
                       candidates: { color: "#FF007F", label: "Kandidaten" }
                     }}
                   >
-                    <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                      <XAxis 
-                        dataKey="name" 
-                        stroke="#6b7280" 
-                        tick={{ fill: '#6b7280', fontSize: 12 }}
-                        angle={-45}
-                        textAnchor="end"
-                        height={70}
-                      />
-                      <YAxis 
-                        yAxisId="left"
-                        stroke="#6b7280" 
-                        tick={{ fill: '#6b7280', fontSize: 12 }}
-                      />
-                      <YAxis 
-                        yAxisId="right"
-                        orientation="right"
-                        stroke="#6b7280" 
-                        tick={{ fill: '#6b7280', fontSize: 12 }} 
-                      />
-                      <ChartTooltip 
-                        content={
-                          <ChartTooltipContent 
-                            labelFormatter={(label) => `Modul: ${label}`}
-                          />
-                        } 
-                      />
-                      <Legend />
-                      <Bar 
-                        dataKey="avgScore" 
-                        name="Ø Score" 
-                        yAxisId="left"
-                        fill="var(--color-avgScore)" 
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <Bar 
-                        dataKey="completionRate" 
-                        name="Abschlussrate" 
-                        yAxisId="left"
-                        fill="var(--color-completionRate)" 
-                        radius={[4, 4, 0, 0]}
-                      />
-                      <Bar 
-                        dataKey="candidates" 
-                        name="Kandidaten" 
-                        yAxisId="right"
-                        fill="var(--color-candidates)" 
-                        radius={[4, 4, 0, 0]}
-                      />
-                    </BarChart>
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 70 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
+                        <XAxis 
+                          dataKey="name" 
+                          stroke="#6b7280" 
+                          tick={{ fill: '#6b7280', fontSize: 12 }}
+                          angle={-45}
+                          textAnchor="end"
+                          height={70}
+                        />
+                        <YAxis 
+                          yAxisId="left"
+                          stroke="#6b7280" 
+                          tick={{ fill: '#6b7280', fontSize: 12 }}
+                        />
+                        <YAxis 
+                          yAxisId="right"
+                          orientation="right"
+                          stroke="#6b7280" 
+                          tick={{ fill: '#6b7280', fontSize: 12 }} 
+                        />
+                        <ChartTooltip 
+                          content={
+                            <ChartTooltipContent 
+                              labelFormatter={(label) => `Modul: ${label}`}
+                            />
+                          } 
+                        />
+                        <Legend />
+                        <Bar 
+                          dataKey="avgScore" 
+                          name="Ø Score" 
+                          yAxisId="left"
+                          fill="var(--color-avgScore)" 
+                          radius={[4, 4, 0, 0]}
+                        />
+                        <Bar 
+                          dataKey="completionRate" 
+                          name="Abschlussrate" 
+                          yAxisId="left"
+                          fill="var(--color-completionRate)" 
+                          radius={[4, 4, 0, 0]}
+                        />
+                        <Bar 
+                          dataKey="candidates" 
+                          name="Kandidaten" 
+                          yAxisId="right"
+                          fill="var(--color-candidates)" 
+                          radius={[4, 4, 0, 0]}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
                   </ChartContainer>
                 </div>
               </CardContent>
@@ -383,7 +423,7 @@ const SimulationsPage = () => {
             
             {/* AI Analysis Cards */}
             <h2 className="text-xl font-semibold mt-8 mb-4 flex items-center gap-2">
-              <Robot className="h-5 w-5 text-tactflux-pink" />
+              <Bot className="h-5 w-5 text-tactflux-pink" />
               KI-Analysen pro Modul
             </h2>
             

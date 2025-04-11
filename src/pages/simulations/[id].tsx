@@ -3,14 +3,17 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/layout/Layout';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Brain, Robot, Award, Clock, Users, BarChart, LineChart as LineChartIcon } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/components/ui/use-toast';
+import { 
+  ArrowLeft, Users, Clock, Award, 
+  Brain, LineChart, BarChart3, 
+  Bot, ChevronRight, FileText
+} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useToast } from '@/components/ui/use-toast';
 
 interface Simulation {
   id: string;
@@ -24,20 +27,8 @@ interface Simulation {
   gpt_detection_count: number;
   avg_gpt_probability: number;
   suspicious_answers_rate: number;
-  created_at: string;
-  target_role: string;
+  role?: string;
 }
-
-// Mock time series data (to be replaced with actual data from Supabase)
-const mockTimeSeriesData = [
-  { date: '2025-01-01', score: 72, candidates: 12, gptDetection: 15 },
-  { date: '2025-02-01', score: 75, candidates: 18, gptDetection: 20 },
-  { date: '2025-03-01', score: 68, candidates: 22, gptDetection: 25 },
-  { date: '2025-04-01', score: 82, candidates: 30, gptDetection: 18 },
-  { date: '2025-05-01', score: 85, candidates: 35, gptDetection: 15 },
-  { date: '2025-06-01', score: 88, candidates: 42, gptDetection: 12 },
-  { date: '2025-07-01', score: 91, candidates: 45, gptDetection: 10 },
-];
 
 const difficultyColors = {
   'Einfach': 'text-green-400',
@@ -58,55 +49,77 @@ const SimulationDetailPage = () => {
   const [simulation, setSimulation] = useState<Simulation | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  useEffect(() => {
-    const checkUserRole = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate('/login');
-        return;
-      }
-      
-      // Get user role from metadata
-      const role = session.user?.user_metadata?.role || null;
-      
-      // Redirect if not a dev
-      if (role !== 'dev') {
-        navigate('/not-authorized');
-        toast({
-          title: "Zugriff verweigert",
-          description: "Sie benötigen Entwicklerrechte, um auf diese Seite zuzugreifen.",
-          variant: "destructive"
-        });
-      }
-    };
-    
-    checkUserRole();
-  }, [navigate, toast]);
 
   useEffect(() => {
-    const fetchSimulation = async () => {
-      if (!id) return;
-      
+    const loadSimulation = async () => {
       try {
         setLoading(true);
         
-        const { data, error } = await supabase
-          .from('simulations')
-          .select('*')
-          .eq('id', id)
-          .single();
+        // For now, we'll use dummy data
+        // In a real app, this would fetch from your Supabase DB
+        const dummyData: Simulation[] = [
+          {
+            id: '1',
+            name: 'Kreatives Denken',
+            description: 'Test für kreative Problemlösung',
+            completion_rate: 78,
+            avg_time_seconds: 1320, // 22 minutes
+            difficulty: 'Mittel',
+            candidates_count: 145,
+            avg_score: 72,
+            gpt_detection_count: 12,
+            avg_gpt_probability: 28,
+            suspicious_answers_rate: 15,
+            role: 'Designer'
+          },
+          {
+            id: '2',
+            name: 'Logisches Denken',
+            description: 'Test für analytische Fähigkeiten',
+            completion_rate: 92,
+            avg_time_seconds: 1500, // 25 minutes
+            difficulty: 'Schwer',
+            candidates_count: 203,
+            avg_score: 68,
+            gpt_detection_count: 45,
+            avg_gpt_probability: 76,
+            suspicious_answers_rate: 62,
+            role: 'Entwickler'
+          },
+          {
+            id: '3',
+            name: 'Kommunikation',
+            description: 'Test für kommunikative Fähigkeiten',
+            completion_rate: 95,
+            avg_time_seconds: 900, // 15 minutes
+            difficulty: 'Einfach',
+            candidates_count: 312,
+            avg_score: 88,
+            gpt_detection_count: 5,
+            avg_gpt_probability: 12,
+            suspicious_answers_rate: 8,
+            role: 'Manager'
+          }
+        ];
         
-        if (error) throw error;
+        const sim = dummyData.find(s => s.id === id);
         
-        setSimulation(data);
+        if (sim) {
+          setSimulation(sim);
+        } else {
+          setError('Simulation nicht gefunden');
+          toast({
+            title: "Nicht gefunden",
+            description: "Die angeforderte Simulation existiert nicht.",
+            variant: "destructive"
+          });
+        }
       } catch (err) {
-        console.error('Error fetching simulation:', err);
-        setError('Fehler beim Laden der Simulationsdetails');
+        console.error('Error loading simulation:', err);
+        setError('Fehler beim Laden der Simulation');
         toast({
           title: "Fehler",
-          description: "Die Simulationsdetails konnten nicht geladen werden.",
+          description: "Die Simulationsdaten konnten nicht geladen werden.",
           variant: "destructive"
         });
       } finally {
@@ -114,20 +127,27 @@ const SimulationDetailPage = () => {
       }
     };
     
-    fetchSimulation();
+    loadSimulation();
   }, [id, toast]);
-
-  // Format date strings for chart
-  const formattedChartData = mockTimeSeriesData.map(item => ({
-    ...item,
-    date: new Date(item.date).toLocaleDateString('de-DE', { month: 'short', year: '2-digit' })
-  }));
 
   if (loading) {
     return (
       <Layout>
-        <div className="flex justify-center items-center min-h-[50vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-tactflux-turquoise"></div>
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-[250px]" />
+              <Skeleton className="h-4 w-[150px]" />
+            </div>
+          </div>
+          
+          <Skeleton className="h-[300px] w-full rounded-xl" />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Skeleton className="h-[200px] w-full rounded-xl" />
+            <Skeleton className="h-[200px] w-full rounded-xl" />
+          </div>
         </div>
       </Layout>
     );
@@ -136,12 +156,15 @@ const SimulationDetailPage = () => {
   if (error || !simulation) {
     return (
       <Layout>
-        <div className="flex flex-col items-center justify-center min-h-[50vh]">
-          <h2 className="text-xl font-bold text-red-400 mb-4">
-            {error || 'Simulation nicht gefunden'}
-          </h2>
-          <Button onClick={() => navigate('/simulations')}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
+        <div className="flex flex-col items-center justify-center p-12 text-center">
+          <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+          <h2 className="text-2xl font-bold mb-2">Simulation nicht gefunden</h2>
+          <p className="text-muted-foreground mb-6">{error || "Die angeforderte Simulation konnte nicht geladen werden."}</p>
+          <Button 
+            onClick={() => navigate('/simulations')}
+            className="bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
             Zurück zur Übersicht
           </Button>
         </div>
@@ -152,277 +175,170 @@ const SimulationDetailPage = () => {
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center gap-3">
-            <Button variant="outline" size="icon" onClick={() => navigate('/simulations')}>
-              <ArrowLeft className="h-4 w-4" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold">{simulation.name}</h1>
-              <p className="text-gray-400 mt-1">{simulation.description}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="bg-tactflux-violet/20 text-tactflux-violet border-tactflux-violet/30">
-              {simulation.difficulty}
-            </Badge>
-            <Badge variant="outline" className="bg-tactflux-turquoise/20 text-tactflux-turquoise border-tactflux-turquoise/30">
-              {simulation.target_role || 'Alle Rollen'}
-            </Badge>
-          </div>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => navigate('/simulations')}
+          >
+            <ArrowLeft className="h-4 w-4 mr-1" />
+            Alle Simulationen
+          </Button>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <span className="text-muted-foreground">{simulation.name}</span>
         </div>
         
-        {/* Key metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-tactflux-gray border-white/5 shadow-card">
-            <CardContent className="p-4">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Info Card */}
+          <Card className="bg-tactflux-gray border-white/5 shadow-card lg:col-span-2">
+            <CardHeader className="border-b border-white/5">
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm text-gray-400">Durchschnittlicher Score</p>
-                  <h3 className="text-3xl font-bold mt-1">
-                    <span className={`${
-                      simulation.avg_score > 80 ? 'text-green-400' : 
-                      simulation.avg_score > 50 ? 'text-yellow-400' : 'text-red-400'
-                    }`}>
-                      {simulation.avg_score}%
-                    </span>
-                  </h3>
+                  <h1 className="text-2xl font-bold">{simulation.name}</h1>
+                  <p className="text-gray-400">{simulation.description}</p>
                 </div>
-                <div className="bg-gradient-to-br from-tactflux-turquoise/20 to-tactflux-violet/20 p-2 rounded-lg">
-                  <Award className="h-5 w-5 text-tactflux-turquoise" />
-                </div>
+                <Badge className={`${difficultyColors[simulation.difficulty as keyof typeof difficultyColors]} bg-transparent`}>
+                  {simulation.difficulty}
+                </Badge>
               </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-tactflux-gray border-white/5 shadow-card">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm text-gray-400">Kandidaten</p>
-                  <h3 className="text-3xl font-bold mt-1">{simulation.candidates_count}</h3>
-                </div>
-                <div className="bg-gradient-to-br from-tactflux-turquoise/20 to-tactflux-violet/20 p-2 rounded-lg">
-                  <Users className="h-5 w-5 text-tactflux-violet" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-tactflux-gray border-white/5 shadow-card">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm text-gray-400">Ø Bearbeitungszeit</p>
-                  <h3 className="text-2xl font-bold mt-1">{formatTime(simulation.avg_time_seconds)}</h3>
-                </div>
-                <div className="bg-gradient-to-br from-tactflux-turquoise/20 to-tactflux-violet/20 p-2 rounded-lg">
-                  <Clock className="h-5 w-5 text-tactflux-turquoise" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="bg-tactflux-gray border-white/5 shadow-card">
-            <CardContent className="p-4">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm text-gray-400">KI-Verdacht</p>
-                  <h3 className="text-3xl font-bold mt-1">
-                    <span className={`${
-                      simulation.avg_gpt_probability > 80 ? 'text-red-400' : 
-                      simulation.avg_gpt_probability > 50 ? 'text-yellow-400' : 'text-green-400'
-                    }`}>
-                      {simulation.avg_gpt_probability}%
-                    </span>
-                  </h3>
-                </div>
-                <div className="bg-gradient-to-br from-tactflux-turquoise/20 to-tactflux-violet/20 p-2 rounded-lg">
-                  <Robot className="h-5 w-5 text-tactflux-pink" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        
-        {/* Score Trend Chart */}
-        <Card className="bg-tactflux-gray border-white/5 shadow-card">
-          <CardHeader className="border-b border-white/5">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <LineChartIcon className="h-5 w-5 text-tactflux-violet" />
-              Score & Teilnehmer-Entwicklung
-            </h2>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="h-80">
-              <ChartContainer
-                config={{
-                  score: { color: "#00FFFF", label: "Score" },
-                  candidates: { color: "#BE5CFF", label: "Kandidaten" },
-                  gptDetection: { color: "#FF007F", label: "KI-Verdacht" }
-                }}
-              >
-                <LineChart data={formattedChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                  <XAxis 
-                    dataKey="date" 
-                    stroke="#6b7280" 
-                    tick={{ fill: '#6b7280', fontSize: 12 }}
-                  />
-                  <YAxis 
-                    yAxisId="left"
-                    stroke="#6b7280" 
-                    tick={{ fill: '#6b7280', fontSize: 12 }}
-                  />
-                  <YAxis 
-                    yAxisId="right"
-                    orientation="right"
-                    stroke="#6b7280" 
-                    tick={{ fill: '#6b7280', fontSize: 12 }} 
-                  />
-                  <ChartTooltip 
-                    content={
-                      <ChartTooltipContent 
-                        labelFormatter={(label) => `Datum: ${label}`}
-                      />
-                    } 
-                  />
-                  <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="score" 
-                    name="Score %" 
-                    stroke="var(--color-score)" 
-                    yAxisId="left"
-                    strokeWidth={2}
-                    dot={{ fill: 'var(--color-score)', strokeWidth: 0, r: 4 }} 
-                    activeDot={{ r: 6, stroke: 'var(--color-score)', strokeWidth: 2 }} 
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="candidates" 
-                    name="Kandidaten" 
-                    stroke="var(--color-candidates)" 
-                    yAxisId="right"
-                    strokeWidth={2}
-                    dot={{ fill: 'var(--color-candidates)', strokeWidth: 0, r: 4 }} 
-                    activeDot={{ r: 6, stroke: 'var(--color-candidates)', strokeWidth: 2 }} 
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="gptDetection" 
-                    name="KI-Verdacht %" 
-                    stroke="var(--color-gptDetection)" 
-                    yAxisId="left"
-                    strokeWidth={2}
-                    dot={{ fill: 'var(--color-gptDetection)', strokeWidth: 0, r: 4 }} 
-                    activeDot={{ r: 6, stroke: 'var(--color-gptDetection)', strokeWidth: 2 }} 
-                  />
-                </LineChart>
-              </ChartContainer>
-            </div>
-          </CardContent>
-        </Card>
-        
-        {/* AI Analysis */}
-        <Card className="bg-tactflux-gray border-white/5 shadow-card">
-          <CardHeader className="border-b border-white/5">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <Robot className="h-5 w-5 text-tactflux-pink" />
-              KI-Analyse
-            </h2>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-3">KI-Erkennungsrate</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Erkennungsrate</span>
-                      <span className={`${
-                        simulation.avg_gpt_probability > 80 ? 'text-red-400' : 
-                        simulation.avg_gpt_probability > 50 ? 'text-yellow-400' : 'text-green-400'
-                      }`}>
-                        {simulation.avg_gpt_probability}%
-                      </span>
-                    </div>
-                    <Progress 
-                      value={simulation.avg_gpt_probability} 
-                      className="h-3 bg-white/10" 
-                      indicatorClassName={`${
-                        simulation.avg_gpt_probability > 80 ? 'bg-red-500' : 
-                        simulation.avg_gpt_probability > 50 ? 'bg-yellow-500' : 
-                        'bg-green-500'
-                      }`}
-                    />
-                  </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+                <div className="text-center p-4 bg-tactflux-gray/30 rounded-lg">
+                  <Users className="h-6 w-6 mx-auto text-tactflux-turquoise mb-2" />
+                  <div className="text-2xl font-bold">{simulation.candidates_count}</div>
+                  <div className="text-xs text-gray-400">Teilnehmer</div>
                 </div>
                 
-                <div>
-                  <h3 className="text-lg font-medium mb-3">Auffällige Antworten</h3>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Auffälligkeitsrate</span>
-                      <span className={`${
-                        simulation.suspicious_answers_rate > 50 ? 'text-red-400' : 
-                        simulation.suspicious_answers_rate > 25 ? 'text-yellow-400' : 'text-green-400'
-                      }`}>
-                        {simulation.suspicious_answers_rate}%
-                      </span>
-                    </div>
-                    <Progress 
-                      value={simulation.suspicious_answers_rate} 
-                      className="h-3 bg-white/10" 
-                      indicatorClassName={`${
-                        simulation.suspicious_answers_rate > 50 ? 'bg-red-500' : 
-                        simulation.suspicious_answers_rate > 25 ? 'bg-yellow-500' : 
-                        'bg-green-500'
-                      }`}
-                    />
-                  </div>
+                <div className="text-center p-4 bg-tactflux-gray/30 rounded-lg">
+                  <Award className="h-6 w-6 mx-auto text-tactflux-violet mb-2" />
+                  <div className="text-2xl font-bold">{simulation.avg_score}%</div>
+                  <div className="text-xs text-gray-400">Ø Score</div>
+                </div>
+                
+                <div className="text-center p-4 bg-tactflux-gray/30 rounded-lg">
+                  <Clock className="h-6 w-6 mx-auto text-tactflux-turquoise mb-2" />
+                  <div className="text-2xl font-bold">{formatTime(simulation.avg_time_seconds)}</div>
+                  <div className="text-xs text-gray-400">Ø Zeit</div>
+                </div>
+                
+                <div className="text-center p-4 bg-tactflux-gray/30 rounded-lg">
+                  <Bot className="h-6 w-6 mx-auto text-tactflux-pink mb-2" />
+                  <div className="text-2xl font-bold">{simulation.avg_gpt_probability}%</div>
+                  <div className="text-xs text-gray-400">KI-Verdacht</div>
                 </div>
               </div>
               
-              <div className="bg-tactflux-black/30 rounded-lg p-5 border border-white/5">
-                <h3 className="text-lg font-medium mb-3">KI-Analysebericht</h3>
-                <p className="text-gray-400 mb-4">
-                  Automatische Analyse der KI-Nutzungsmuster in diesem Modul:
-                </p>
-                <ul className="space-y-3 text-sm">
-                  <li className="flex gap-2">
-                    <span className="text-tactflux-turquoise">•</span>
-                    <span>Dieses Modul zeigt {simulation.avg_gpt_probability > 50 ? 'erhöhte' : 'geringe'} KI-Aktivität</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-tactflux-turquoise">•</span>
-                    <span>Insgesamt {simulation.gpt_detection_count} KI-Erkennungen in den Antworten</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-tactflux-turquoise">•</span>
-                    <span>{simulation.suspicious_answers_rate}% der Antworten zeigen auffällige Muster</span>
-                  </li>
-                  <li className="flex gap-2">
-                    <span className="text-tactflux-turquoise">•</span>
-                    <span>Durchschnittlicher KI-Wahrscheinlichkeitswert: {simulation.avg_gpt_probability}%</span>
-                  </li>
-                </ul>
-                <div className="mt-4 pt-4 border-t border-white/10">
-                  <h4 className="font-medium mb-2">Empfehlungen:</h4>
-                  <p className="text-sm text-gray-400">
-                    {simulation.avg_gpt_probability > 80 
-                      ? 'Dringender Handlungsbedarf: KI-Erkennungsmaßnahmen verstärken und Moduldesign prüfen.' 
-                      : simulation.avg_gpt_probability > 50 
-                        ? 'Beobachten: Erhöhte KI-Aktivität festgestellt. Moduldesign auf KI-Resistenz prüfen.' 
-                        : 'Kein Handlungsbedarf: Die KI-Aktivität bei diesem Modul liegt im normalen Bereich.'
-                    }
-                  </p>
+              <div className="space-y-6">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">Abschlussrate</span>
+                    <span className="text-sm font-medium">{simulation.completion_rate}%</span>
+                  </div>
+                  <Progress 
+                    value={simulation.completion_rate} 
+                    className="h-2" 
+                    indicatorClassName="bg-tactflux-turquoise"
+                  />
+                </div>
+                
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium">KI-Erkennungsrate</span>
+                    <span className="text-sm font-medium">{simulation.avg_gpt_probability}%</span>
+                  </div>
+                  <Progress 
+                    value={simulation.avg_gpt_probability} 
+                    className="h-2" 
+                    indicatorClassName={`${
+                      simulation.avg_gpt_probability > 80 ? 'bg-red-500' : 
+                      simulation.avg_gpt_probability > 50 ? 'bg-yellow-500' : 
+                      'bg-green-500'
+                    }`}
+                  />
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+          
+          {/* Actions Card */}
+          <Card className="bg-tactflux-gray border-white/5 shadow-card">
+            <CardHeader className="border-b border-white/5">
+              <h2 className="text-xl font-semibold">Aktionen</h2>
+            </CardHeader>
+            <CardContent className="p-6 space-y-4">
+              <Button className="w-full bg-gradient-to-r from-tactflux-turquoise to-tactflux-violet">
+                Kandidaten einladen
+              </Button>
+              
+              <Button variant="outline" className="w-full">
+                Simulation bearbeiten
+              </Button>
+              
+              <Button variant="outline" className="w-full">
+                Ergebnisse exportieren
+              </Button>
+              
+              <Button variant="outline" className="w-full text-red-400 hover:text-red-300 hover:bg-red-500/10">
+                Simulation löschen
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Tabs for different views */}
+        <Tabs defaultValue="results" className="w-full">
+          <TabsList className="mb-6">
+            <TabsTrigger value="results">Ergebnisse</TabsTrigger>
+            <TabsTrigger value="questions">Fragen</TabsTrigger>
+            <TabsTrigger value="settings">Einstellungen</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="results" className="space-y-6">
+            <Card className="bg-tactflux-gray border-white/5 shadow-card">
+              <CardHeader className="border-b border-white/5">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-tactflux-turquoise" />
+                  Ergebnisübersicht
+                </h2>
+              </CardHeader>
+              <CardContent className="p-6">
+                <p className="text-center text-muted-foreground py-8">
+                  Hier würden die detaillierten Ergebnisse und Statistiken angezeigt werden.
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="questions" className="space-y-6">
+            <Card className="bg-tactflux-gray border-white/5 shadow-card">
+              <CardHeader className="border-b border-white/5">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <FileText className="h-5 w-5 text-tactflux-violet" />
+                  Fragenkatalog
+                </h2>
+              </CardHeader>
+              <CardContent className="p-6">
+                <p className="text-center text-muted-foreground py-8">
+                  Hier würden die Fragen und Aufgaben der Simulation angezeigt werden.
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          <TabsContent value="settings" className="space-y-6">
+            <Card className="bg-tactflux-gray border-white/5 shadow-card">
+              <CardHeader className="border-b border-white/5">
+                <h2 className="text-xl font-semibold">Simulationseinstellungen</h2>
+              </CardHeader>
+              <CardContent className="p-6">
+                <p className="text-center text-muted-foreground py-8">
+                  Hier würden die Einstellungen und Konfigurationsoptionen angezeigt werden.
+                </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </Layout>
   );
