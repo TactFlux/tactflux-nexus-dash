@@ -7,10 +7,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import NotAuthorized from "./pages/NotAuthorized";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import CandidatesPage from "./pages/candidates";
 import SimulationsPage from "./pages/simulations";
+import SimulationDetailPage from "./pages/simulations/[id]";
 import StatisticsPage from "./pages/statistics";
 
 const queryClient = new QueryClient();
@@ -24,6 +26,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/not-authorized" element={<NotAuthorized />} />
             <Route path="/" element={
               <ProtectedRoute>
                 <Index />
@@ -37,6 +40,11 @@ const App = () => (
             <Route path="/simulations" element={
               <ProtectedRoute>
                 <SimulationsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/simulations/:id" element={
+              <ProtectedRoute>
+                <SimulationDetailPage />
               </ProtectedRoute>
             } />
             <Route path="/statistics" element={
