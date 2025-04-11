@@ -1,15 +1,22 @@
 
 import { useState, useEffect } from 'react';
 
+interface User {
+  id: string;
+  isAdmin: boolean;
+}
+
 interface AuthState {
   isAuthenticated: boolean;
   isLoading: boolean;
+  user: User | null;
 }
 
 export const useAuth = (): AuthState => {
   const [authState, setAuthState] = useState<AuthState>({
     isAuthenticated: false,
     isLoading: true,
+    user: null
   });
 
   useEffect(() => {
@@ -23,6 +30,10 @@ export const useAuth = (): AuthState => {
           setAuthState({
             isAuthenticated: !!parsed.isAdmin,
             isLoading: false,
+            user: {
+              id: parsed.id || 'default-user-id',
+              isAdmin: !!parsed.isAdmin
+            }
           });
         } catch (error) {
           // Invalid JSON in localStorage
@@ -30,12 +41,14 @@ export const useAuth = (): AuthState => {
           setAuthState({
             isAuthenticated: false,
             isLoading: false,
+            user: null
           });
         }
       } else {
         setAuthState({
           isAuthenticated: false,
           isLoading: false,
+          user: null
         });
       }
     };
